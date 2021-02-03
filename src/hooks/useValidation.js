@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { compose, curry, prop, all, map, reduce, converge, head, applyTo } from 'ramda';
+import { compose, curry, prop, all, map, reduce, converge, head, applyTo, equals } from 'ramda';
 import { isPropertyValid } from '../utils';
 
 /**
@@ -61,7 +61,7 @@ export const useValidation = (validationSchema) => {
       runValidator,
       prop(property, validationSchema),
     );
-    const allValidationsValid = all((x) => x === true, bools);
+    const allValidationsValid = all(equals(true), bools);
     const errors = bools.reduce((acc, curr, idx) => {
       const errorOf = compose(
       prop('error'), prop(idx), prop(property));

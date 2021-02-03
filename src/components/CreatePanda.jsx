@@ -1,56 +1,38 @@
-import { applyTo, compose, cond, curry, ifElse, map } from 'ramda';
+import { compose, cond as firstMatch } from 'ramda';
 import React, { useState } from 'react';
+import {emptyPanda} from '../entities/panda';
 import { NameForm } from '../forms/Name.form';
-import { trace } from '../utils';
+import { through, trace } from '../utils';
 import { NameValidations } from '../validations/nameform.validations';
 
 export const CreatePanda = () => {
   const { validateAll } = NameValidations();
   const [submitFailed, setSubmitFailed] = useState(false);
-  const [panda, setPanda] = useState({
-    firstName: '',
-    lastName: '',
-    food: [],
-    friend: {
-      firstName: '',
-      lastName: '',
-      lengthOfFriendship: 0,
-    },
-  });
+  const [panda, setPanda] = useState(emptyPanda());
 
-  // toggleSubmitFailed :: bool -> a -> a
-  const toggleSubmitFailed = curry((bool, _) => {
-    setSubmitFailed(bool);
-  });
-
-  // onSuccess :: Panda -> void
+  // dispatchPayload :: Panda -> void
   const dispatchPayload = compose(
     trace('handling potential errors'),
     trace('sending payload'),
   );
 
   // onFailure :: Panda -> void
-  const onFailure = compose(
+  const onFailure = through([
     trace('rendering front-end errors'),
-    toggleSubmitFailed(true)
-  );
-
-  // onSuccess :: Panda -> void
-  const onSuccess = p => map(applyTo(p), [
-    dispatchPayload,
-    toggleSubmitFailed(false)
+    _ => setSubmitFailed(true)
   ]);
 
-  // handleSubmit :: () -> fn(Panda)
-  const handleSubmit = () => cond([
+  // onSuccess :: Panda -> void
+  const onSuccess = through([
+    dispatchPayload,
+    _ => setSubmitFailed(false)
+  ]);
+
+  // handleSubmit :: Panda -> fn(Panda)
+  const handleSubmit = firstMatch([
     [validateAll, onSuccess],
     [_ => true, onFailure],
-  ])(panda);
-
-  // validatepayload :: () -> fn(Panda)
-  const validatePayload = () => {
-    return ifElse(validateAll, onSuccess, onFailure)(panda);
-  };
+  ]);
 
   return (
     <>
@@ -60,8 +42,7 @@ export const CreatePanda = () => {
         onChange={setPanda}
         submitFailed={submitFailed}
       />
-      <button onClick={validatePayload}>Submit 1</button>
-      <button onClick={handleSubmit}>Submit 2</button>
+      <button onClick={() => handleSubmit(panda)}>Submit</button>
       <div>{submitFailed ? "Data Invalid" : "Data Valid"}</div>
     </>
   );

@@ -1,6 +1,6 @@
-import { __, compose, mergeDeepRight, converge, keys, head, prop, applyTo, map } from 'ramda';
+import { __, compose, mergeRight, converge, keys, head, prop } from 'ramda';
 import React, {useEffect } from 'react';
-import { eventNameValue } from '../utils';
+import { eventNameValue, through } from '../utils';
 import { NameValidations } from '../validations/nameform.validations';
 
 export const NameForm = ({
@@ -8,7 +8,6 @@ export const NameForm = ({
   data,
   submitFailed,
 }) => {
-  // --[ dependencies ]--------------------------------------------------------
   const {
     getError,
     validate,
@@ -16,28 +15,26 @@ export const NameForm = ({
     validateIfTrue,
   } = NameValidations();
 
-  // --[ component logic ]-----------------------------------------------------
- 
   // get :: string -> data[string]
   const get = prop(__, data);
-
-  // validateChange :: InputEvent -> void
-  const validateChange = compose(
-    converge(
-      validateIfTrue, [
-        compose(head, keys),
-        mergeDeepRight(data),
-      ]
-    ),
-    eventNameValue,
-  );
 
   // handleBlur :: InputEvent -> void
   const handleBlur = compose(
     converge(
       validate, [
         compose(head, keys),
-        mergeDeepRight(data),
+        mergeRight(data),
+      ]
+    ),
+    eventNameValue,
+  );
+
+  // validateChange :: InputEvent -> void
+  const validateChange = compose(
+    converge(
+      validateIfTrue, [
+        compose(head, keys),
+        mergeRight(data),
       ]
     ),
     eventNameValue,
@@ -46,17 +43,16 @@ export const NameForm = ({
   // updateState :: InputEvent -> void
   const updateState = compose(
     onChange,
-    mergeDeepRight(data),
+    mergeRight(data),
     eventNameValue,
   );
 
   // handleChange :: InputEvent -> void
-  const handleChange = e => map(applyTo(e), [
+  const handleChange = through([
     validateChange,
     updateState
   ]);
 
-  // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
     submitFailed && validateAll(data);
   }, [submitFailed]); // eslint-disable-line

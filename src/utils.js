@@ -1,4 +1,4 @@
-import {compose, converge, curry, prop} from "ramda";
+import {applyTo, compose, converge, curry, map, prop} from "ramda";
 
 export const set = curry((property, value) => ({ [property]: value }));
 
@@ -19,12 +19,9 @@ export const nameValue = (event) => {
   };
 };
 
-export const executeSideEffect = curry((f, x) => {
-  f(x);
-  return x;
-});
-
 export const trace = curry((msg, x) => console.log(msg, x) || x);
+
+export const through = curry((list, x) => map(applyTo(x), list));
 
 export function isPropertyValid(property, validations) {
   return compose(prop('isValid'), prop(property))(validations);
