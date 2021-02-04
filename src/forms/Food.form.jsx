@@ -1,5 +1,6 @@
 import { __, compose, mergeRight, converge, prop, always } from 'ramda';
 import React, {useEffect } from 'react';
+import {DefaultCheckbox} from '../common/DefaultCheckbox.component';
 import { eventNameChecked, through } from '../utils';
 import {FoodFormValidations} from '../validations/FoodForm.validations';
 
@@ -62,42 +63,24 @@ export const FoodForm = ({
       <div className="form__group" >
         <fieldset >
           <legend>Food</legend>
-          <div className="form__group">
-            <input
-              checked={get("bambooLeaves")}
-              className="form__checkbox"
-              id="check_1"
-              name="bambooLeaves"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              type="checkbox"
-            />
-            <label htmlFor="check_1">Bamboo Leaves</label>
-          </div>
-          <div className="form__group">
-            <input
-              checked={get("bambooShoots")}
-              className="form__checkbox"
-              id="check_2"
-              name="bambooShoots"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              type="checkbox"
-            />
-            <label htmlFor="check_2">Bamboo Shoots</label>
-          </div>
-          <div className="form__group">
-            <input
-              checked={get("bambooStems")}
-              className="form__checkbox"
-              id="check_3"
-              name="bambooStems"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              type="checkbox"
-            />
-            <label htmlFor="check_3">Bamboo Stems</label>
-          </div>
+          <DefaultCheckbox
+            checked={get("bambooLeaves")}
+            name="bambooLeaves"
+            onBlur={handleBlur}
+            onChange={handleChange}
+          />
+          <DefaultCheckbox
+            checked={get("bambooShoots")}
+            name="bambooShoots"
+            onBlur={handleBlur}
+            onChange={handleChange}
+          />
+          <DefaultCheckbox
+            checked={get("bambooStems")}
+            name="bambooStems"
+            onBlur={handleBlur}
+            onChange={handleChange}
+          />
           {getError('isChecked') && <p role="alert">{getError('isChecked')}</p>}
         </fieldset>
       </div>

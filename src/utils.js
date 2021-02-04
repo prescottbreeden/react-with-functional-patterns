@@ -1,6 +1,12 @@
 import {applyTo, compose, converge, curry, map, prop} from "ramda";
 
 export const set = curry((property, value) => ({ [property]: value }));
+export const trace = curry((msg, x) => console.log(msg, x) || x);
+export const through = curry((list, x) => map(applyTo(x), list));
+
+export function isPropertyValid(property, validations) {
+  return compose(prop('isValid'), prop(property))(validations);
+}
 
 export const eventNameValue = compose(
   converge(
@@ -22,32 +28,23 @@ export const eventNameChecked = compose(
   prop('target')
 );
 
-// export const nameValue = (event) => {
-//   return {
-//     name: event.target.name,
-//     value: event.target.value,
-//   };
-// };
-
-export const trace = curry((msg, x) => console.log(msg, x) || x);
-
-export const through = curry((list, x) => map(applyTo(x), list));
-
-export function isPropertyValid(property, validations) {
-  return compose(prop('isValid'), prop(property))(validations);
-}
-
+// stackoverflow
 export const randomString = () =>
   Math.random()
     .toString(36)
     .substring(7)
+
+// stackoverflow
+export const removeCamelCase = text => {
+  const result = text.replace( /([A-Z])/g, " $1" );
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
 
 // -------------------------------------------------------------
 //      Demo purposes??
 // -------------------------------------------------------------
 export const validateAll = (errors, data) => {
   return Object.keys(data).reduce((prev, current) => {
-    console.log(data);
     return {
       ...prev,
       [current]: {

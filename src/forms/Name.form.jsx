@@ -1,7 +1,7 @@
-import { __, compose, mergeRight, converge, keys, head, prop, concat } from 'ramda';
-import React, {useEffect } from 'react';
-import {Input} from '../components/formElements/input.component';
-import { eventNameValue, randomString, through } from '../utils';
+import { __, compose, mergeRight, converge, keys, head, prop } from 'ramda';
+import React, { useEffect } from 'react';
+import { DefaultInput } from '../common/DefaultInput.component';
+import { eventNameValue, through } from '../utils';
 import { NameValidations } from '../validations/Name.validations';
 
 export const NameForm = ({
@@ -19,7 +19,7 @@ export const NameForm = ({
   // get :: string -> data[string]
   const get = prop(__, data);
 
-  // handleBlur :: InputEvent -> void
+  // handleBlur :: DefaultInputEvent -> void
   const handleBlur = compose(
     converge(
       validate, [
@@ -30,7 +30,7 @@ export const NameForm = ({
     eventNameValue,
   );
 
-  // validateChange :: InputEvent -> void
+  // validateChange :: DefaultInputEvent -> void
   const validateChange = compose(
     converge(
       validateIfTrue, [
@@ -41,14 +41,14 @@ export const NameForm = ({
     eventNameValue,
   );
 
-  // updateState :: InputEvent -> void
+  // updateState :: DefaultInputEvent -> void
   const updateState = compose(
     onChange,
     mergeRight(data),
     eventNameValue,
   );
 
-  // handleChange :: InputEvent -> void
+  // handleChange :: DefaultInputEvent -> void
   const handleChange = through([
     validateChange,
     updateState
@@ -63,21 +63,21 @@ export const NameForm = ({
       <div className="form__group" >
         <fieldset>
           <legend>Name</legend>
-          <Input 
+          <DefaultInput 
             error={getError('firstName')}
             name="firstName"
             onBlur={handleBlur}
             onChange={handleChange}
             value={get('firstName')}
           />
-          <Input 
+          <DefaultInput 
             error={getError('lastName')}
             name="lastName"
             onBlur={handleBlur}
             onChange={handleChange}
             value={get('lastName')}
           />
-          <Input 
+          <DefaultInput 
             name="middleName"
             onBlur={handleBlur}
             onChange={handleChange}

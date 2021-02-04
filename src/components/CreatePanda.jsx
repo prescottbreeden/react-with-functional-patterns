@@ -1,10 +1,11 @@
 import { __, compose, cond as firstMatch, prop, mergeRight } from 'ramda';
 import React, { useState } from 'react';
-import {emptyPanda} from '../models/panda';
-import {FoodForm} from '../forms/Food.form';
+import { emptyPanda } from '../models/panda';
+import { FoodForm } from '../forms/Food.form';
 import { NameForm } from '../forms/Name.form';
-import { set, through, trace } from '../utils';
-import {PandaValidations} from '../validations/Panda.validations';
+import { randomString, set, through, trace } from '../utils';
+import { PandaValidations } from '../validations/Panda.validations';
+import { FriendForm } from '../forms/Friend.form';
 
 export const CreatePanda = () => {
   // --[ dependencies ]--------------------------------------------------------
@@ -19,6 +20,13 @@ export const CreatePanda = () => {
   const [panda, setPanda] = useState(emptyPanda());
 
   // --[ model handlers ]------------------------------------------------------
+  // handleNameChange :: Name -> void
+  const handleNameChange = compose(
+    setPanda,
+    mergeRight(panda),
+    set("name")
+  );
+
   // handleFoodChange :: Food -> void
   const handleFoodChange = compose(
     setPanda,
@@ -26,11 +34,11 @@ export const CreatePanda = () => {
     set("food")
   );
 
-  // handleFoodChange :: Name -> void
-  const handleNameChange = compose(
+  // handleFriendChange :: Name -> void
+  const handleFriendChange = compose(
     setPanda,
     mergeRight(panda),
-    set("name")
+    set("friend")
   );
 
   // --[ submission logic ]----------------------------------------------------
@@ -73,15 +81,15 @@ export const CreatePanda = () => {
         onChange={handleFoodChange}
         submitFailed={submitFailed}
       />
+      <h2>Add a friend for your panda</h2>
+      <FriendForm 
+        data={get("friend")}
+        onChange={handleFriendChange}
+        submitFailed={submitFailed}
+      />
       <button onClick={() => handleSubmit(panda)}>Submit</button>
-      {!isValid && (
-        <>
-          <div>
-            {validationErrors.map(error =>
-              <p key={Math.random()}>{error}</p>)}
-          </div>
-        </>
-      )}
+      {!isValid && validationErrors.map(error => 
+        <p key={randomString()}>{error}</p>)}
     </>
   );
 };

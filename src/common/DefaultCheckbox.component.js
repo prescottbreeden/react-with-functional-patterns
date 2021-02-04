@@ -1,34 +1,33 @@
 import {concat} from 'ramda';
 import React from 'react';
-import {randomString} from '../../utils';
+import {randomString, removeCamelCase} from '../utils';
 
-export const Input = props => {
-  const {
-    disabled,
-    error,
-    label,
-    name,
-    value,
-    onBlur,
-    onChange
-  } = props;
-
+export const DefaultCheckbox = ({
+  disabled,
+  error,
+  label,
+  name,
+  onBlur,
+  onChange,
+  value,
+}) => {
   const hash = randomString();
-
   return (
     <>
       <div className="form__group">
-        <label htmlFor={concat(name, hash)}>
-          {label ? label : name}
-        </label>
         <input
+          checked={value}
+          className="form__checkbox"
           disabled={disabled}
           id={concat(name, hash)}
           name={name}
           onBlur={onBlur}
           onChange={onChange}
-          value={value}
+          type="checkbox"
         />
+        <label htmlFor={concat(name, hash)}>
+          {label ? label : removeCamelCase(name)}
+        </label>
         {error && <p role="alert">{error}</p>}
       </div>
     </>

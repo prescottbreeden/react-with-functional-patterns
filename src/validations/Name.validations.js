@@ -1,5 +1,5 @@
 import {useValidation} from '../hooks/useValidation';
-import {compose, lt as gt, length, prop, equals, trim } from 'ramda';
+import {compose, lt as gt, length, prop, equals, trim, defaultTo } from 'ramda';
 
 export const NameValidations = () => {
   return useValidation({
@@ -10,6 +10,7 @@ export const NameValidations = () => {
           gt(0),
           length,
           trim,
+          defaultTo(''),
           prop('firstName')
         )
       },
@@ -19,6 +20,7 @@ export const NameValidations = () => {
           equals(false),
           equals('bob'),
           trim,
+          defaultTo(''),
           prop('firstName')
         )
       },
@@ -30,6 +32,7 @@ export const NameValidations = () => {
           gt(0),
           length,
           trim,
+          defaultTo(''),
           prop('lastName')
         )
       }
