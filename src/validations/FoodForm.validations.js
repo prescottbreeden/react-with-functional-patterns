@@ -1,16 +1,16 @@
-import {useValidation} from '../hooks/useValidation';
-import {compose, lt as gt, length, prop, converge } from 'ramda';
+import { useValidation } from '../hooks/useValidation';
+import { prop, anyPass } from 'ramda';
 
 export const FoodFormValidations = () => {
   return useValidation({
     isChecked: [
       {
-        error: 'One Food must be checked.',
-        validation: food => {
-          return food.bambooLeaves ||
-          food.bambooShoots ||
-          food.bambooStems;
-        }
+        error: 'At least one Food must be checked.',
+        validation: anyPass([
+          prop('bambooLeaves'),
+          prop('bambooShoots'),
+          prop('bambooStems'),
+        ]),
       }
     ]
   })
