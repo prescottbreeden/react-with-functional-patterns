@@ -8,5 +8,10 @@
 }
 .form__group {
   width: 40rem;
-  margin-bottom: 1.5rem;
+  margin: 1rem 0;
+}
+
+.form__checkbox {
+  outline: 1px solid #eee;
+  margin-right: 1rem;
 }

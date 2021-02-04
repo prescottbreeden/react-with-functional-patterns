@@ -1,15 +1,39 @@
-import { compose, cond as firstMatch } from 'ramda';
+import { __, compose, cond as firstMatch, prop, mergeRight } from 'ramda';
 import React, { useState } from 'react';
-import {emptyPanda} from '../entities/panda';
+import {emptyPanda} from '../models/panda';
+import {FoodForm} from '../forms/Food.form';
 import { NameForm } from '../forms/Name.form';
-import { through, trace } from '../utils';
-import { NameValidations } from '../validations/nameform.validations';
+import { set, through, trace } from '../utils';
+import {PandaValidations} from '../validations/Panda.validations';
 
 export const CreatePanda = () => {
-  const { validateAll } = NameValidations();
+  // --[ dependencies ]--------------------------------------------------------
+  const {
+    isValid,
+    validateAll,
+    validationErrors,
+  } = PandaValidations();
+
+  // --[ local state ]---------------------------------------------------------
   const [submitFailed, setSubmitFailed] = useState(false);
   const [panda, setPanda] = useState(emptyPanda());
 
+  // --[ model handlers ]------------------------------------------------------
+  // handleFoodChange :: Food -> void
+  const handleFoodChange = compose(
+    setPanda,
+    mergeRight(panda),
+    set("food")
+  );
+
+  // handleFoodChange :: Name -> void
+  const handleNameChange = compose(
+    setPanda,
+    mergeRight(panda),
+    set("name")
+  );
+
+  // --[ submission logic ]----------------------------------------------------
   // dispatchPayload :: Panda -> void
   const dispatchPayload = compose(
     trace('handling potential errors'),
@@ -19,13 +43,13 @@ export const CreatePanda = () => {
   // onFailure :: Panda -> void
   const onFailure = through([
     trace('rendering front-end errors'),
-    _ => setSubmitFailed(true)
+    () => setSubmitFailed(true)
   ]);
 
   // onSuccess :: Panda -> void
   const onSuccess = through([
     dispatchPayload,
-    _ => setSubmitFailed(false)
+    () => setSubmitFailed(false)
   ]);
 
   // handleSubmit :: Panda -> fn(Panda)
@@ -34,16 +58,30 @@ export const CreatePanda = () => {
     [_ => true, onFailure],
   ]);
 
+  const get = prop(__, panda);
+
   return (
     <>
       <h1>Let's make a panda!</h1>
       <NameForm
-        data={panda}
-        onChange={setPanda}
+        data={get('name')}
+        onChange={handleNameChange}
+        submitFailed={submitFailed}
+      />
+      <FoodForm 
+        data={get("food")}
+        onChange={handleFoodChange}
         submitFailed={submitFailed}
       />
       <button onClick={() => handleSubmit(panda)}>Submit</button>
-      <div>{submitFailed ? "Data Invalid" : "Data Valid"}</div>
+      {!isValid && (
+        <>
+          <div>
+            {validationErrors.map(error =>
+              <p key={Math.random()}>{error}</p>)}
+          </div>
+        </>
+      )}
     </>
   );
 };

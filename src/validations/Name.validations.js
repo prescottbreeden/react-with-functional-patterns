@@ -1,5 +1,5 @@
 import {useValidation} from '../hooks/useValidation';
-import {compose, lt as gt, length, prop, equals } from 'ramda';
+import {compose, lt as gt, length, prop, equals, trim } from 'ramda';
 
 export const NameValidations = () => {
   return useValidation({
@@ -9,6 +9,7 @@ export const NameValidations = () => {
         validation: compose(
           gt(0),
           length,
+          trim,
           prop('firstName')
         )
       },
@@ -17,6 +18,7 @@ export const NameValidations = () => {
         validation: compose(
           equals(false),
           equals('bob'),
+          trim,
           prop('firstName')
         )
       },
@@ -27,6 +29,7 @@ export const NameValidations = () => {
         validation: compose(
           gt(0),
           length,
+          trim,
           prop('lastName')
         )
       }

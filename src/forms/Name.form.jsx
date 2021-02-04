@@ -1,7 +1,8 @@
-import { __, compose, mergeRight, converge, keys, head, prop } from 'ramda';
+import { __, compose, mergeRight, converge, keys, head, prop, concat } from 'ramda';
 import React, {useEffect } from 'react';
-import { eventNameValue, through } from '../utils';
-import { NameValidations } from '../validations/nameform.validations';
+import {Input} from '../components/formElements/input.component';
+import { eventNameValue, randomString, through } from '../utils';
+import { NameValidations } from '../validations/Name.validations';
 
 export const NameForm = ({
   onChange,
@@ -59,25 +60,30 @@ export const NameForm = ({
 
   return (
     <>
-      <div className="form__group">
-        <label>First Name</label>
-        <input
-          name="firstName"
-          onBlur={handleBlur}
-          onChange={handleChange}
-          value={get('firstName')}
-        />
-        {getError('firstName') && <p>{getError('firstName')}</p>}
-      </div>
-      <div className="form__group">
-        <label>Last Name</label>
-        <input
-          name="lastName"
-          onBlur={handleBlur}
-          onChange={handleChange}
-          value={get('lastName')}
-        />
-        {getError('lastName') && <p>{getError('lastName')}</p>}
+      <div className="form__group" >
+        <fieldset>
+          <legend>Name</legend>
+          <Input 
+            error={getError('firstName')}
+            name="firstName"
+            onBlur={handleBlur}
+            onChange={handleChange}
+            value={get('firstName')}
+          />
+          <Input 
+            error={getError('lastName')}
+            name="lastName"
+            onBlur={handleBlur}
+            onChange={handleChange}
+            value={get('lastName')}
+          />
+          <Input 
+            name="middleName"
+            onBlur={handleBlur}
+            onChange={handleChange}
+            value={get('middleName')}
+          />
+        </fieldset>
       </div>
     </>
   );
