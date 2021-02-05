@@ -1,4 +1,4 @@
-# React with Functional Programming Patterns
+# Building Forms in React with Functional Programming Patterns
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -10,6 +10,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ## Folder Structure
 - src/common :: basic inputs can be replaced by any component library elements you like
-- src/component :: form control elements
-- src/form :: composable form elements
-- src/validation :: validation schemas
+- src/components :: form control elements
+- src/forms :: composable form elements
+- src/validations :: validation schemas
+- src/models :: functions to build empty data objects
+- src/layouts :: containers for styling purposes
