@@ -1,13 +1,38 @@
-import {applyTo, compose, converge, curry, map, prop} from "ramda";
+import {applyTo, compose, concat, converge, curry, head, map, prop, replace, slice, toUpper} from "ramda";
 
+// set :: string -> x -> { [string]: x }
 export const set = curry((property, value) => ({ [property]: value }));
+
+// trace :: string -> x -> x
 export const trace = curry((msg, x) => console.log(msg, x) || x);
+
+// through :: [fn] -> x -> [fn(x)]
 export const through = curry((list, x) => map(applyTo(x), list));
 
-export function isPropertyValid(property, validations) {
-  return compose(prop('isValid'), prop(property))(validations);
-}
+// replaceItem :: [a] -> a -> [a]
+export const replaceArrayItem = curry((list, property, b) => {
+  return map(a => (a[property] === b[property] ? b : a), list);
+});
 
+// randomString :: () -> string
+export const randomString = () =>
+  Math.random()
+    .toString(36)
+    .substring(7)
+
+// removeCamelCase :: string -> string
+export const removeCamelCase = compose(
+  converge(concat, [
+    compose(
+      toUpper,
+      head,
+    ),
+    x => x.slice(1)
+  ]),
+  replace(/([A-Z])/g, " $1"),
+);
+
+// eventNameValue :: event -> { [name]: value }
 export const eventNameValue = compose(
   converge(
     set, [
@@ -18,6 +43,7 @@ export const eventNameValue = compose(
   prop('target')
 );
 
+// eventNameValue :: event -> { [name]: checked }
 export const eventNameChecked = compose(
   converge(
     set, [
@@ -27,18 +53,6 @@ export const eventNameChecked = compose(
   ),
   prop('target')
 );
-
-// stackoverflow
-export const randomString = () =>
-  Math.random()
-    .toString(36)
-    .substring(7)
-
-// stackoverflow
-export const removeCamelCase = text => {
-  const result = text.replace( /([A-Z])/g, " $1" );
-  return result.charAt(0).toUpperCase() + result.slice(1);
-}
 
 // -------------------------------------------------------------
 //      Demo purposes??

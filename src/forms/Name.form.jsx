@@ -1,6 +1,6 @@
 import { __, compose, mergeRight, converge, keys, head, prop } from 'ramda';
 import React, { useEffect } from 'react';
-import { DefaultInput } from '../common/DefaultInput.component';
+import { DefaultInput } from '../common/DefaultInput.common';
 import { eventNameValue, through } from '../utils';
 import { NameValidations } from '../validations/Name.validations';
 

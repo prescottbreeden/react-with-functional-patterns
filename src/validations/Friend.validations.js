@@ -1,4 +1,4 @@
-import {useValidation} from '../hooks/useValidation';
+import {useValidation} from '../hooks/useValidation.hook';
 import {compose, defaultTo, length, lt as gt, prop, trim } from 'ramda';
 import {NameValidations} from './Name.validations';
 

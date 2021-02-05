@@ -1,5 +1,5 @@
-import {useValidation} from '../hooks/useValidation';
-import {compose, lt as gt, length, prop, equals, trim } from 'ramda';
+import {useValidation} from '../hooks/useValidation.hook';
+import {compose, prop } from 'ramda';
 import {NameValidations} from './Name.validations';
 import {FoodFormValidations} from './FoodForm.validations';
 import {FriendValidations} from './Friend.validations';

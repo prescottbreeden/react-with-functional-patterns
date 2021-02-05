@@ -1,12 +1,12 @@
-import { __, compose, cond as firstMatch, prop, mergeRight, curry, map } from 'ramda';
+import { __, compose, cond as firstMatch, prop, mergeRight } from 'ramda';
 import React, { useState } from 'react';
 import { emptyPanda } from '../models/panda';
 import { FoodForm } from '../forms/Food.form';
 import { NameForm } from '../forms/Name.form';
-import { randomString, set, through, trace } from '../utils';
+import { randomString, replaceArrayItem, set, through, trace } from '../utils';
 import { PandaValidations } from '../validations/Panda.validations';
 import { FriendForm } from '../forms/Friend.form';
-import { DynamicForm } from '../common/DynamicForm.component';
+import { DynamicForm } from './DynamicForm.component';
 
 export const CreatePanda = () => {
   // --[ dependencies ]--------------------------------------------------------
@@ -38,12 +38,7 @@ export const CreatePanda = () => {
     set("food"),
   );
 
-  // replaceItem :: [a] -> a -> [a]
-  const replaceArrayItem = curry((list, property, b) => {
-    return map(a => (a[property] === b[property] ? b : a), list);
-  });
-
-  // handleFriendChange :: Name -> void
+  // handleFriendChange :: Friend -> void
   const handleFriendChange = compose(
     setPanda,
     mergeRight(panda),
@@ -80,7 +75,7 @@ export const CreatePanda = () => {
     <section>
       <h1>Let's make a panda!</h1>
       <fieldset>
-        <legend>CreatePanda.component.js</legend>
+        <legend>CreatePanda.component.jsx</legend>
         <NameForm
           data={get('name')}
           onChange={handleNameChange}

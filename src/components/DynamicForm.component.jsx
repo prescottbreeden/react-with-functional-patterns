@@ -17,7 +17,7 @@ export const DynamicForm = ({
   return (
     <>
       <fieldset>
-        <legend>DynamicForm.js</legend>
+        <legend>DynamicForm.component.jsx</legend>
         <FlexColumn>
           {items.map((data) => (
             <div style={{ display: 'flex' }} key={prop(formKey, data)}>

@@ -1,6 +1,6 @@
 import { __, compose, mergeRight, converge, prop, always } from 'ramda';
 import React, {useEffect } from 'react';
-import {DefaultCheckbox} from '../common/DefaultCheckbox.component';
+import {DefaultCheckbox} from '../common/DefaultCheckbox.common';
 import { eventNameChecked, through } from '../utils';
 import {FoodFormValidations} from '../validations/FoodForm.validations';
 
@@ -62,7 +62,7 @@ export const FoodForm = ({
     <section>
       <div className="form__group" >
         <fieldset >
-          <legend>Food</legend>
+          <legend>Food.form.jsx</legend>
           <DefaultCheckbox
             checked={get("bambooLeaves")}
             name="bambooLeaves"

@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { compose, curry, prop, all, map, reduce, converge, head, applyTo, equals } from 'ramda';
-import { isPropertyValid } from '../utils';
+
+// helper
+function isPropertyValid(property, validations) {
+  return compose(prop('isValid'), prop(property))(validations);
+}
 
 /**
  * A hook that can be used to generate an object containing functions and
