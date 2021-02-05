@@ -35,7 +35,7 @@ export const NameForm = ({ onChange, data, submitFailed }) => {
   return (
     <>
       <fieldset>
-        <legend>Name.form.js</legend>
+        <legend>Name.form.jsx</legend>
         <div className="form__group">
           <DefaultInput
             error={getError("firstName")}

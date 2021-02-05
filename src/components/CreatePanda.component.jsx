@@ -1,30 +1,14 @@
-import {
-  __,
-  compose,
-  cond as firstMatch,
-  prop,
-  mergeRight,
-  converge,
-  always,
-} from "ramda";
+import { compose, cond as firstMatch, mergeRight } from "ramda";
 import React, { useState } from "react";
 import { emptyPanda } from "../models/panda.model";
-import { FoodForm } from "../forms/Food.form";
-import { NameForm } from "../forms/Name.form";
-import { randomString, replaceArrayItem, set, through, trace } from "../utils";
+import { randomString, through, trace } from "../utils";
 import { PandaValidations } from "../validations/Panda.validations";
-import { FriendForm } from "../forms/Friend.form";
-import { DynamicForm } from "./DynamicForm.component";
 import { useToggle } from "../hooks/useToggle.hook";
+import { PandaForm } from "../forms/Panda.form";
 
 export const CreatePanda = () => {
   // --[ dependencies ]--------------------------------------------------------
-  const {
-    isValid,
-    validateAll,
-    validateIfTrue,
-    validationErrors,
-  } = PandaValidations();
+  const { isValid, validateAll, validationErrors } = PandaValidations();
 
   // --[ local state ]---------------------------------------------------------
   const [panda, _setPanda] = useState(emptyPanda());
@@ -35,27 +19,9 @@ export const CreatePanda = () => {
   ] = useToggle(false);
 
   // --[ component logic ]-----------------------------------------------------
-  // get :: string -> panda[string]
-  const get = prop(__, panda);
 
-  // validateChange :: Name | Food | [Friend] -> void
-  const validateChange = (name) =>
-    compose(converge(validateIfTrue, [always(name), mergeRight(panda)]));
-
-  // updateModel :: Name | Food | [Friend] -> { Name | Food | [Friend] }
-  // lambda expressions stored in dictionary by submodel names
-  const updateModel = {
-    name: set("name"),
-    food: set("food"),
-    friends: compose(set("friends"), replaceArrayItem(get("friends"), "id")),
-  };
-
-  // handleChange :: string -> Name | Food | [Friend] -> void
-  const handleChange = (name) =>
-    through([
-      validateChange(name),
-      compose(_setPanda, mergeRight(panda), updateModel[name]),
-    ]);
+  // updatePanda :: { Name | Food | [Friend] } -> void
+  const updatePanda = compose(_setPanda, mergeRight(panda));
 
   // --[ submission logic ]----------------------------------------------------
   // dispatchPayload :: Panda -> void
@@ -84,25 +50,9 @@ export const CreatePanda = () => {
       <h1>Let's make a panda!</h1>
       <fieldset>
         <legend>CreatePanda.component.jsx</legend>
-        <NameForm
-          data={get("name")}
-          onChange={handleChange("name")}
-          submitFailed={hasValidationErrors}
-        />
-        <FoodForm
-          data={get("food")}
-          onChange={handleChange("food")}
-          submitFailed={hasValidationErrors}
-        />
-        <h2>Add friends for your panda</h2>
-        <DynamicForm
-          addForm={(_) => null}
-          entity="Friend"
-          form={FriendForm}
-          items={get("friends")}
-          formKey="id"
-          onChange={handleChange("friends")}
-          removeForm={(_) => null}
+        <PandaForm
+          data={panda}
+          onChange={updatePanda}
           submitFailed={hasValidationErrors}
         />
         <button onClick={() => handleSubmit(panda)}>Submit</button>
