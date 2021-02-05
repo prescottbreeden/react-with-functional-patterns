@@ -1,11 +1,10 @@
-import './App.css';
 import {CreatePanda} from './components/CreatePanda';
 
 function App() {
   return (
-    <div className="App">
+    <main className="App">
       <CreatePanda />
-    </div>
+    </main>
   );
 }
 

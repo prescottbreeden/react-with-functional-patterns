@@ -1,4 +1,4 @@
-import { __, compose, cond as firstMatch, prop, mergeRight } from 'ramda';
+import { __, compose, cond as firstMatch, prop, mergeRight, curry, map } from 'ramda';
 import React, { useState } from 'react';
 import { emptyPanda } from '../models/panda';
 import { FoodForm } from '../forms/Food.form';
@@ -6,6 +6,7 @@ import { NameForm } from '../forms/Name.form';
 import { randomString, set, through, trace } from '../utils';
 import { PandaValidations } from '../validations/Panda.validations';
 import { FriendForm } from '../forms/Friend.form';
+import { DynamicForm } from '../common/DynamicForm.component';
 
 export const CreatePanda = () => {
   // --[ dependencies ]--------------------------------------------------------
@@ -19,6 +20,9 @@ export const CreatePanda = () => {
   const [submitFailed, setSubmitFailed] = useState(false);
   const [panda, setPanda] = useState(emptyPanda());
 
+  // get :: string -> panda[string]
+  const get = prop(__, panda);
+
   // --[ model handlers ]------------------------------------------------------
   // handleNameChange :: Name -> void
   const handleNameChange = compose(
@@ -31,14 +35,20 @@ export const CreatePanda = () => {
   const handleFoodChange = compose(
     setPanda,
     mergeRight(panda),
-    set("food")
+    set("food"),
   );
+
+  // replaceItem :: [a] -> a -> [a]
+  const replaceArrayItem = curry((list, property, b) => {
+    return map(a => (a[property] === b[property] ? b : a), list);
+  });
 
   // handleFriendChange :: Name -> void
   const handleFriendChange = compose(
     setPanda,
     mergeRight(panda),
-    set("friend")
+    set('friends'),
+    replaceArrayItem(get('friends'), 'id'),
   );
 
   // --[ submission logic ]----------------------------------------------------
@@ -66,31 +76,37 @@ export const CreatePanda = () => {
     [_ => true, onFailure],
   ]);
 
-  const get = prop(__, panda);
-
   return (
-    <>
+    <section>
       <h1>Let's make a panda!</h1>
-      <NameForm
-        data={get('name')}
-        onChange={handleNameChange}
-        submitFailed={submitFailed}
-      />
-      <FoodForm 
-        data={get("food")}
-        onChange={handleFoodChange}
-        submitFailed={submitFailed}
-      />
-      <h2>Add a friend for your panda</h2>
-      <FriendForm 
-        data={get("friend")}
-        onChange={handleFriendChange}
-        submitFailed={submitFailed}
-      />
-      <button onClick={() => handleSubmit(panda)}>Submit</button>
-      {!isValid && validationErrors.map(error => 
-        <p key={randomString()}>{error}</p>)}
-    </>
+      <fieldset>
+        <legend>CreatePanda.component.js</legend>
+        <NameForm
+          data={get('name')}
+          onChange={handleNameChange}
+          submitFailed={submitFailed}
+        />
+        <FoodForm 
+          data={get("food")}
+          onChange={handleFoodChange}
+          submitFailed={submitFailed}
+        />
+        <h2>Add friends for your panda</h2>
+        <DynamicForm
+          addForm={_ => null}
+          entity="Friend"
+          form={FriendForm}
+          items={get('friends')}
+          formKey="id"
+          onChange={handleFriendChange}
+          removeForm={_ => null}
+          submitFailed={submitFailed}
+        />
+        <button onClick={() => handleSubmit(panda)}>Submit</button>
+        {!isValid && validationErrors.map(error => 
+          <p key={randomString()}>{error}</p>)}
+      </fieldset>
+    </section>
   );
 };
 

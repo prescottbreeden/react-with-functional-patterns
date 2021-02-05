@@ -66,18 +66,23 @@ export const FriendForm = ({
   const get = prop(__, data);
   return (
     <>
-      <NameForm
-        data={get('name')}
-        onChange={handleNameChange}
-        submitFailed={submitFailed}
-      />
-      <DefaultInput 
-        error={getError("lengthOfFriendship")}
-        name="lengthOfFriendship"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={get('lengthOfFriendship')}
-      />
+      <fieldset>
+        <legend>Friend.form.js</legend>
+        <div className="form__group">
+          <NameForm
+            data={get('name')}
+            onChange={handleNameChange}
+            submitFailed={submitFailed}
+          />
+          <DefaultInput 
+            error={getError("lengthOfFriendship")}
+            name="lengthOfFriendship"
+            onBlur={handleBlur}
+            onChange={handleChange}
+            value={get('lengthOfFriendship')}
+          />
+        </div>
+      </fieldset>
     </>
   );
 };

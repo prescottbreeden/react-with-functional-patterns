@@ -1,6 +1,6 @@
-import {concat} from 'ramda';
+import { compose, concat } from 'ramda';
 import React from 'react';
-import {randomString, removeCamelCase} from '../utils';
+import { randomString, removeCamelCase } from '../utils';
 
 export const DefaultCheckbox = ({
   disabled,
@@ -9,25 +9,42 @@ export const DefaultCheckbox = ({
   name,
   onBlur,
   onChange,
-  value,
+  checked,
 }) => {
   const hash = randomString();
+  const createFakeEvent = () => ({
+    target: {
+      name,
+      checked: !checked
+    }
+  });
+
+  const fakeEvent = compose(
+    onChange,
+    createFakeEvent
+  );
+  
   return (
     <>
-      <div className="form__group">
+      <div className="checkbox">
         <input
-          checked={value}
-          className="form__checkbox"
+          aria-labelledby={concat(name, hash)}
+          checked={checked}
+          className="checkbox__input"
           disabled={disabled}
-          id={concat(name, hash)}
           name={name}
           onBlur={onBlur}
           onChange={onChange}
           type="checkbox"
         />
-        <label htmlFor={concat(name, hash)}>
+        <span 
+          aria-label={label ? label : removeCamelCase(name)}
+          className="checkbox__label"
+          id={concat(name, hash)}
+          onClick={fakeEvent}
+        >
           {label ? label : removeCamelCase(name)}
-        </label>
+        </span>
         {error && <p role="alert">{error}</p>}
       </div>
     </>

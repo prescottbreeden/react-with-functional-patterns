@@ -28,15 +28,52 @@ p {
 }
 
 button {
+  margin-top: .4rem;
   padding: .5rem 1rem;
   border-radius: 4px;
-  background-color: steelblue;
-  border-color: steelblue;
+  background-color: darkgreen;
+  border-color: darkgreen;
   color: #eee;
   font-size: 1.2rem;
 }
 button:hover {
   cursor: pointer;
-  background-color: darkgreen;
-  border-color: darkgreen;
 }
+
+.App {
+  padding: 2rem 4rem;
+}
+
+.form__row {
+  width: 100%;
+  display: flex;
+  align-content: flex-start;
+}
+.form__group {
+  width: 100%;
+  margin: 1rem 0;
+}
+.checkbox {
+  display: flex;
+}
+.checkbox__input {
+  outline: 1px solid #eee;
+  margin-right: 1rem;
+}
+.checkbox__label:hover {
+  cursor: pointer;
+}
+/* .form__row { */
+/*   display: flex; */
+/*   width: 100%; */
+/*   align-content: center; */
+/*   margin-bottom: 2.4rem; */
+/*   flex-wrap: wrap; */
+/* } */
+
+/* .form__group { */
+/*   display: flex; */
+/*   flex-direction: column; */
+/*   margin-right: 1rem; */
+/* } */
+

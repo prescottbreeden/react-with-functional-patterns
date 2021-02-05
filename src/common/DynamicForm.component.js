@@ -1,38 +1,46 @@
+import {prop} from 'ramda';
 import React from 'react';
-import { Box, Button, FlexColumn, FlexRow } from 'layouts';
-import { idOrRandom } from 'utilities/general.utils';
+import { FlexColumn, FlexRow } from '../layouts';
 
 export const DynamicForm = ({
   addForm,
+  entity,
   form,
-  items,
+  items = [],
+  formKey,
   onChange,
   removeForm,
   resetValidation,
   submitFailed,
 }) => {
+
   return (
     <>
-      <FlexColumn>
-        {items.map((data) => (
-          <FlexRow key={idOrRandom(data)}>
-            {React.createElement(form, {
-              data,
-              onChange,
-              resetValidation,
-              submitFailed,
-            })}
-            <Box style={{ alignSelf: 'flex-end' }}>
-              <Button onClick={() => removeForm(data)}>Remove</Button>
-            </Box>
-          </FlexRow>
-        ))}
-      </FlexColumn>
-      <FlexRow>
-        <Button onClick={addForm} className="button form__btn--add">
-          Add
-        </Button>
-      </FlexRow>
+      <fieldset>
+        <legend>DynamicForm.js</legend>
+        <FlexColumn>
+          {items.map((data) => (
+            <div style={{ display: 'flex' }} key={prop(formKey, data)}>
+              {React.createElement(form, {
+                data,
+                onChange,
+                resetValidation,
+                submitFailed,
+              })}
+              <div>
+                <button onClick={() => removeForm(data)}>
+                  Remove {entity}
+                </button>
+              </div>
+            </div>
+          ))}
+        </FlexColumn>
+        <FlexRow>
+          <button onClick={addForm} className="button form__btn--add">
+            Add {entity}
+          </button>
+        </FlexRow>
+      </fieldset>
     </>
   );
 };

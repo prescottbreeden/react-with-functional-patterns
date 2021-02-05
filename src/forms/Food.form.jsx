@@ -59,7 +59,7 @@ export const FoodForm = ({
   }, [submitFailed]); // eslint-disable-line
 
   return (
-    <>
+    <section>
       <div className="form__group" >
         <fieldset >
           <legend>Food</legend>
@@ -84,7 +84,7 @@ export const FoodForm = ({
           {getError('isChecked') && <p role="alert">{getError('isChecked')}</p>}
         </fieldset>
       </div>
-    </>
+    </section>
   );
 };
 

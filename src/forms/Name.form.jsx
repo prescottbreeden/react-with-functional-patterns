@@ -60,9 +60,9 @@ export const NameForm = ({
 
   return (
     <>
-      <div className="form__group" >
-        <fieldset>
-          <legend>Name</legend>
+      <fieldset>
+        <legend>Name.form.js</legend>
+        <div className="form__group" >
           <DefaultInput 
             error={getError('firstName')}
             name="firstName"
@@ -83,8 +83,8 @@ export const NameForm = ({
             onChange={handleChange}
             value={get('middleName')}
           />
-        </fieldset>
-      </div>
+        </div>
+      </fieldset>
     </>
   );
 };
