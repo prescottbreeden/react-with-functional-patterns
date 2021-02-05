@@ -1,5 +1,5 @@
 import {useValidation} from '../hooks/useValidation.hook';
-import {compose, prop } from 'ramda';
+import {all, compose, equals, map, prop } from 'ramda';
 import {NameValidations} from './Name.validations';
 import {FoodFormValidations} from './FoodForm.validations';
 import {FriendValidations} from './Friend.validations';
@@ -27,12 +27,13 @@ export const PandaValidations = () => {
         ),
       }
     ],
-    friend: [
+    friends: [
       {
         error: 'Please check the "Friend" section for errors.',
         validation: compose(
-          validateFriend,
-          prop('friend')
+          all(equals(true)),
+          map(validateFriend),
+          prop('friends')
         ),
       }
     ],

@@ -1,6 +1,6 @@
-import { __, compose, cond as firstMatch, prop, mergeRight } from 'ramda';
+import { __, compose, cond as firstMatch, prop, mergeRight, converge, always } from 'ramda';
 import React, { useState } from 'react';
-import { emptyPanda } from '../models/panda';
+import { emptyPanda } from '../models/panda.model';
 import { FoodForm } from '../forms/Food.form';
 import { NameForm } from '../forms/Name.form';
 import { randomString, replaceArrayItem, set, through, trace } from '../utils';
@@ -13,6 +13,7 @@ export const CreatePanda = () => {
   const {
     isValid,
     validateAll,
+    validateIfTrue,
     validationErrors,
   } = PandaValidations();
 
@@ -23,28 +24,36 @@ export const CreatePanda = () => {
   // get :: string -> panda[string]
   const get = prop(__, panda);
 
-  // --[ model handlers ]------------------------------------------------------
-  // handleNameChange :: Name -> void
-  const handleNameChange = compose(
-    setPanda,
-    mergeRight(panda),
-    set("name")
+  // validateChange :: DefaultInputEvent -> void
+  const validateChange = name => compose(
+    converge(
+      validateIfTrue, [
+        always(name),
+        mergeRight(panda)
+      ]
+    ),
   );
 
-  // handleFoodChange :: Food -> void
-  const handleFoodChange = compose(
-    setPanda,
-    mergeRight(panda),
-    set("food"),
-  );
+  // updateModel :: Name | Food | [Friend] -> void
+  // lambda expressions stored in dictionary by submodel names
+  const updateModel = {
+    name: set("name"),
+    food: set("food"),
+    friends: compose(
+      set('friends'),
+      replaceArrayItem(get('friends'), 'id'),
+    ),
+  };
 
-  // handleFriendChange :: Friend -> void
-  const handleFriendChange = compose(
-    setPanda,
-    mergeRight(panda),
-    set('friends'),
-    replaceArrayItem(get('friends'), 'id'),
-  );
+  // handleChange :: DefaultInputEvent -> void
+  const handleChange = name => through([
+    validateChange(name),
+    compose(
+      setPanda,
+      mergeRight(panda),
+      updateModel[name]
+    ),
+  ]);
 
   // --[ submission logic ]----------------------------------------------------
   // dispatchPayload :: Panda -> void
@@ -78,12 +87,12 @@ export const CreatePanda = () => {
         <legend>CreatePanda.component.jsx</legend>
         <NameForm
           data={get('name')}
-          onChange={handleNameChange}
+          onChange={handleChange('name')}
           submitFailed={submitFailed}
         />
         <FoodForm 
           data={get("food")}
-          onChange={handleFoodChange}
+          onChange={handleChange('food')}
           submitFailed={submitFailed}
         />
         <h2>Add friends for your panda</h2>
@@ -93,7 +102,7 @@ export const CreatePanda = () => {
           form={FriendForm}
           items={get('friends')}
           formKey="id"
-          onChange={handleFriendChange}
+          onChange={handleChange('friends')}
           removeForm={_ => null}
           submitFailed={submitFailed}
         />
