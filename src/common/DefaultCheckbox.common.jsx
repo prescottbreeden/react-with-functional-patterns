@@ -1,6 +1,6 @@
-import { compose, concat } from 'ramda';
-import React from 'react';
-import { randomString, removeCamelCase } from '../utils';
+import { compose, concat } from "ramda";
+import React from "react";
+import { randomString, removeCamelCase } from "../utils";
 
 export const DefaultCheckbox = ({
   disabled,
@@ -15,15 +15,12 @@ export const DefaultCheckbox = ({
   const createFakeEvent = () => ({
     target: {
       name,
-      checked: !checked
-    }
+      checked: !checked,
+    },
   });
 
-  const fakeEvent = compose(
-    onChange,
-    createFakeEvent
-  );
-  
+  const fakeEvent = compose(onChange, createFakeEvent);
+
   return (
     <>
       <div className="checkbox">
@@ -37,7 +34,7 @@ export const DefaultCheckbox = ({
           onChange={onChange}
           type="checkbox"
         />
-        <span 
+        <span
           aria-label={label ? label : removeCamelCase(name)}
           className="checkbox__label"
           id={concat(name, hash)}
@@ -50,4 +47,3 @@ export const DefaultCheckbox = ({
     </>
   );
 };
-

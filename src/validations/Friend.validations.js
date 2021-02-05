@@ -1,6 +1,6 @@
-import {useValidation} from '../hooks/useValidation.hook';
-import {compose, defaultTo, length, lt as gt, prop, trim } from 'ramda';
-import {NameValidations} from './Name.validations';
+import { useValidation } from "../hooks/useValidation.hook";
+import { compose, defaultTo, length, lt as gt, prop, trim } from "ramda";
+import { NameValidations } from "./Name.validations";
 
 export const FriendValidations = () => {
   const { validateAll: validateName } = NameValidations();
@@ -8,23 +8,20 @@ export const FriendValidations = () => {
     name: [
       {
         error: 'Please check the "Name" section for errors.',
-        validation: compose(
-          validateName,
-          prop('name')
-        ),
-      }
+        validation: compose(validateName, prop("name")),
+      },
     ],
     lengthOfFriendship: [
       {
-        error: 'Length of Friendship is required.',
+        error: "Length of Friendship is required.",
         validation: compose(
           gt(0),
           length,
           trim,
-          defaultTo(''),
-          prop('lengthOfFriendship')
-        )
+          defaultTo(""),
+          prop("lengthOfFriendship")
+        ),
       },
-    ]
-  })
-}
+    ],
+  });
+};

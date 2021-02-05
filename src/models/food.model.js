@@ -1,4 +1,4 @@
-import {randomString} from "../utils";
+import { randomString } from "../utils";
 
 export const emptyFood = () => ({
   id: randomString(),

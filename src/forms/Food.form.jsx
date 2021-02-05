@@ -1,14 +1,10 @@
-import { __, compose, mergeRight, converge, prop, always } from 'ramda';
-import React, {useEffect } from 'react';
-import {DefaultCheckbox} from '../common/DefaultCheckbox.common';
-import { eventNameChecked, through } from '../utils';
-import {FoodFormValidations} from '../validations/FoodForm.validations';
+import { __, compose, mergeRight, converge, prop, always } from "ramda";
+import React, { useEffect } from "react";
+import { DefaultCheckbox } from "../common/DefaultCheckbox.common";
+import { eventNameChecked, through } from "../utils";
+import { FoodFormValidations } from "../validations/FoodForm.validations";
 
-export const FoodForm = ({
-  onChange,
-  data,
-  submitFailed,
-}) => {
+export const FoodForm = ({ onChange, data, submitFailed }) => {
   const {
     getError,
     validate,
@@ -21,38 +17,21 @@ export const FoodForm = ({
 
   // handleBlur :: InputEvent -> void
   const handleBlur = compose(
-    converge(
-      validate, [
-        always('isChecked'),
-        always(data),
-      ]
-    ),
-    eventNameChecked,
+    converge(validate, [always("isChecked"), always(data)]),
+    eventNameChecked
   );
 
   // validateChange :: InputEvent -> void
   const validateChange = compose(
-    converge(
-      validateIfTrue, [
-        always('isChecked'),
-        mergeRight(data),
-      ]
-    ),
-    eventNameChecked,
+    converge(validateIfTrue, [always("isChecked"), mergeRight(data)]),
+    eventNameChecked
   );
 
   // updateState :: InputEvent -> void
-  const updateState = compose(
-    onChange,
-    mergeRight(data),
-    eventNameChecked,
-  );
+  const updateState = compose(onChange, mergeRight(data), eventNameChecked);
 
   // handleChange :: InputEvent -> void
-  const handleChange = through([
-    validateChange,
-    updateState
-  ]);
+  const handleChange = through([validateChange, updateState]);
 
   useEffect(() => {
     submitFailed && validateAll(data);
@@ -60,8 +39,8 @@ export const FoodForm = ({
 
   return (
     <section>
-      <div className="form__group" >
-        <fieldset >
+      <div className="form__group">
+        <fieldset>
           <legend>Food.form.jsx</legend>
           <DefaultCheckbox
             checked={get("bambooLeaves")}
@@ -81,10 +60,9 @@ export const FoodForm = ({
             onBlur={handleBlur}
             onChange={handleChange}
           />
-          {getError('isChecked') && <p role="alert">{getError('isChecked')}</p>}
+          {getError("isChecked") && <p role="alert">{getError("isChecked")}</p>}
         </fieldset>
       </div>
     </section>
   );
 };
-

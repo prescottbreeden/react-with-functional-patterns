@@ -1,6 +1,6 @@
-import {prop} from 'ramda';
-import React from 'react';
-import { FlexColumn, FlexRow } from '../layouts';
+import { prop } from "ramda";
+import React from "react";
+import { FlexColumn, FlexRow } from "../layouts";
 
 export const DynamicForm = ({
   addForm,
@@ -13,14 +13,13 @@ export const DynamicForm = ({
   resetValidation,
   submitFailed,
 }) => {
-
   return (
     <>
       <fieldset>
         <legend>DynamicForm.component.jsx</legend>
         <FlexColumn>
           {items.map((data) => (
-            <div style={{ display: 'flex' }} key={prop(formKey, data)}>
+            <div style={{ display: "flex" }} key={prop(formKey, data)}>
               {React.createElement(form, {
                 data,
                 onChange,

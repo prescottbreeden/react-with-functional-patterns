@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-export const FlexColumn = props => {
+export const FlexColumn = (props) => {
   return (
     <div className="form__group" {...props}>
       {props.children}
@@ -8,7 +8,7 @@ export const FlexColumn = props => {
   );
 };
 
-export const FlexRow = props => {
+export const FlexRow = (props) => {
   return (
     <div className="form__row" {...props}>
       {props.children}
@@ -16,7 +16,7 @@ export const FlexRow = props => {
   );
 };
 
-export const Box = props => {
+export const Box = (props) => {
   return (
     <div className="form__box" {...props}>
       {props.children}

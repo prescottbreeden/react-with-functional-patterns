@@ -1,8 +1,8 @@
-import {useValidation} from '../hooks/useValidation.hook';
-import {all, compose, equals, map, prop } from 'ramda';
-import {NameValidations} from './Name.validations';
-import {FoodFormValidations} from './FoodForm.validations';
-import {FriendValidations} from './Friend.validations';
+import { useValidation } from "../hooks/useValidation.hook";
+import { all, compose, equals, map, prop } from "ramda";
+import { NameValidations } from "./Name.validations";
+import { FoodFormValidations } from "./FoodForm.validations";
+import { FriendValidations } from "./Friend.validations";
 
 export const PandaValidations = () => {
   const { validateAll: validateName } = NameValidations();
@@ -12,20 +12,14 @@ export const PandaValidations = () => {
     name: [
       {
         error: 'Please check the "Name" section for errors.',
-        validation: compose(
-          validateName,
-          prop('name')
-        ),
-      }
+        validation: compose(validateName, prop("name")),
+      },
     ],
     food: [
       {
         error: 'Please check the "Food" section for errors.',
-        validation: compose(
-          validateFood,
-          prop('food')
-        ),
-      }
+        validation: compose(validateFood, prop("food")),
+      },
     ],
     friends: [
       {
@@ -33,9 +27,9 @@ export const PandaValidations = () => {
         validation: compose(
           all(equals(true)),
           map(validateFriend),
-          prop('friends')
+          prop("friends")
         ),
-      }
+      },
     ],
-  })
-}
+  });
+};

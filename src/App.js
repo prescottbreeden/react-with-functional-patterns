@@ -1,4 +1,4 @@
-import {CreatePanda} from './components/CreatePanda.component';
+import { CreatePanda } from "./components/CreatePanda.component";
 
 function App() {
   return (

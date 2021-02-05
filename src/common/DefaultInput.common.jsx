@@ -1,6 +1,6 @@
-import {concat} from 'ramda';
-import React from 'react';
-import {randomString, removeCamelCase} from '../utils';
+import { concat } from "ramda";
+import React from "react";
+import { randomString, removeCamelCase } from "../utils";
 
 export const DefaultInput = ({
   disabled,
@@ -31,4 +31,3 @@ export const DefaultInput = ({
     </>
   );
 };
-

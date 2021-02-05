@@ -1,15 +1,11 @@
-import { __, compose, mergeRight, converge, keys, head, prop } from 'ramda';
-import React, {useEffect} from 'react';
-import {DefaultInput} from '../common/DefaultInput.common';
-import { NameForm } from '../forms/Name.form';
-import { set, eventNameValue, through } from '../utils';
-import {FriendValidations} from '../validations/Friend.validations';
+import { __, compose, mergeRight, converge, keys, head, prop } from "ramda";
+import React, { useEffect } from "react";
+import { DefaultInput } from "../common/DefaultInput.common";
+import { NameForm } from "../forms/Name.form";
+import { set, eventNameValue, through } from "../utils";
+import { FriendValidations } from "../validations/Friend.validations";
 
-export const FriendForm = ({
-  onChange,
-  submitFailed,
-  data,
-}) => {
+export const FriendForm = ({ onChange, submitFailed, data }) => {
   const {
     getError,
     validate,
@@ -18,46 +14,25 @@ export const FriendForm = ({
   } = FriendValidations();
 
   // handleNameChange :: Name -> void
-  const handleNameChange = compose(
-    onChange,
-    mergeRight(data),
-    set("name")
-  );
+  const handleNameChange = compose(onChange, mergeRight(data), set("name"));
 
   // handleBlur :: DefaultInputEvent -> void
   const handleBlur = compose(
-    converge(
-      validate, [
-        compose(head, keys),
-        mergeRight(data),
-      ]
-    ),
-    eventNameValue,
+    converge(validate, [compose(head, keys), mergeRight(data)]),
+    eventNameValue
   );
 
   // validateChange :: DefaultInputEvent -> void
   const validateChange = compose(
-    converge(
-      validateIfTrue, [
-        compose(head, keys),
-        mergeRight(data),
-      ]
-    ),
-    eventNameValue,
+    converge(validateIfTrue, [compose(head, keys), mergeRight(data)]),
+    eventNameValue
   );
 
   // updateState :: DefaultInputEvent -> void
-  const updateState = compose(
-    onChange,
-    mergeRight(data),
-    eventNameValue,
-  );
+  const updateState = compose(onChange, mergeRight(data), eventNameValue);
 
   // handleChange :: DefaultInputEvent -> void
-  const handleChange = through([
-    validateChange,
-    updateState
-  ]);
+  const handleChange = through([validateChange, updateState]);
 
   useEffect(() => {
     submitFailed && validateAll(data);
@@ -67,23 +42,22 @@ export const FriendForm = ({
   return (
     <>
       <fieldset>
-        <legend>Friend.form.js</legend>
+        <legend>Friend.form.jsx</legend>
         <div className="form__group">
           <NameForm
-            data={get('name')}
+            data={get("name")}
             onChange={handleNameChange}
             submitFailed={submitFailed}
           />
-          <DefaultInput 
+          <DefaultInput
             error={getError("lengthOfFriendship")}
             name="lengthOfFriendship"
             onBlur={handleBlur}
             onChange={handleChange}
-            value={get('lengthOfFriendship')}
+            value={get("lengthOfFriendship")}
           />
         </div>
       </fieldset>
     </>
   );
 };
-

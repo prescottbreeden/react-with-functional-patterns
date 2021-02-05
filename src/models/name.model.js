@@ -1,8 +1,8 @@
-import {randomString} from "../utils";
+import { randomString } from "../utils";
 
 export const emptyName = () => ({
   id: randomString(),
-  firstName: '',
-  lastName: '',
-  middleName: '',
+  firstName: "",
+  lastName: "",
+  middleName: "",
 });
