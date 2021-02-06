@@ -56,3 +56,20 @@ export const eventNameChecked = compose(
   ),
   prop('target')
 );
+
+export const request = (method, payload) => {
+  return method === 'GET'
+    ? fetch('http://localhost:5000/api/name', {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    : fetch('http://localhost:5000/api/name', {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+}

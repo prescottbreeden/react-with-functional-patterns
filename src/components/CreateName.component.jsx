@@ -1,12 +1,12 @@
-import { cond as firstMatch } from "ramda";
+import { cond as firstMatch, mergeRight } from "ramda";
 import React, { useState } from "react";
-import { randomString, through, trace } from "../utils";
+import { randomString, request, through, trace } from "../utils";
 import { useToggle } from "../hooks/useToggle.hook";
 import { NameValidations } from "../validations/Name.validations";
 import { NameForm } from "../forms/Name.form";
 import { emptyName } from "../models/name.model";
 import { FlexRow } from "../layouts";
-import { handleMockApiResponse, mockAPI } from "../apiFaker";
+import { handleMockApiResponse } from "../apiFaker";
 
 export const CreateName = () => {
   // --[ dependencies ]--------------------------------------------------------
@@ -36,11 +36,11 @@ export const CreateName = () => {
     setName
   ]);
 
-  // "error" -> see mock API errors
-  // "success" -> see no mock API errors
   // dispatchPayload :: Name -> void
   const dispatchPayload = async (payload) => {
-    mockAPI("error", payload)
+    request('POST', payload)
+      .then(res => res.json())
+      .then(mergeRight(validationState))
       .then(
         through([
           handleMockApiResponse(forceValidationState),
@@ -48,7 +48,7 @@ export const CreateName = () => {
         ])
       )
       .catch(trace("whoopsies"));
-  };
+  }
 
   /* prettier-ignore */
   // onFailure :: Name -> void
