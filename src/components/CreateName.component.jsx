@@ -1,14 +1,17 @@
-import { compose, cond as firstMatch } from "ramda";
+import { cond as firstMatch } from "ramda";
 import React, { useState } from "react";
 import { randomString, through, trace } from "../utils";
 import { useToggle } from "../hooks/useToggle.hook";
 import { NameValidations } from "../validations/Name.validations";
 import { NameForm } from "../forms/Name.form";
 import { emptyName } from "../models/name.model";
+import { FlexRow } from "../layouts";
+import { handleMockApiResponse, mockAPI } from "../apiFaker";
 
 export const CreateName = () => {
   // --[ dependencies ]--------------------------------------------------------
   const {
+    forceValidationState,
     isValid,
     validateAll,
     validateAllIfTrue,
@@ -29,10 +32,11 @@ export const CreateName = () => {
   const handleChange = through([validateAllIfTrue, setName]);
 
   // dispatchPayload :: Name -> void
-  const dispatchPayload = compose(
-    trace("handling potential errors"),
-    trace("sending payload")
-  );
+  const dispatchPayload = async (payload) => {
+    mockAPI('error', payload)
+      .then(handleMockApiResponse(forceValidationState))
+      .catch(trace('whoopsies'));
+  }
 
   // onFailure :: Name -> void
   const onFailure = through([
@@ -41,7 +45,10 @@ export const CreateName = () => {
   ]);
 
   // onSuccess :: Name -> void
-  const onSuccess = through([dispatchPayload, deactivateValidationErrors]);
+  const onSuccess = through([
+    dispatchPayload,
+    deactivateValidationErrors
+  ]);
 
   // handleSubmit :: Name -> fn(Name)
   const handleSubmit = firstMatch([
@@ -54,11 +61,21 @@ export const CreateName = () => {
       <h1>Let's make a Name!</h1>
       <fieldset>
         <legend>CreateName.component.jsx</legend>
-        <NameForm
-          data={name}
-          onChange={handleChange}
-          submitFailed={hasValidationErrors}
-        />
+        <FlexRow>
+          <div style={{ width: '50%' }}>
+            <NameForm
+              data={name}
+              onChange={handleChange}
+              submitFailed={hasValidationErrors}
+            />
+          </div>
+          <div style={{ width: '50%', marginLeft: '2rem' }}>
+            <h2>Name State</h2>
+            <pre>
+              {JSON.stringify(name, null, 2)}
+            </pre>
+          </div>
+        </FlexRow>
         <button onClick={() => handleSubmit(name)}>Submit</button>
         {!isValid &&
           validationErrors.map((error) => <p key={randomString()}>{error}</p>)}

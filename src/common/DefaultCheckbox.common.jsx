@@ -11,15 +11,19 @@ export const DefaultCheckbox = ({
   onChange,
   checked,
 }) => {
+  // random identifier for a11y
   const hash = randomString();
-  const createFakeEvent = () => ({
+
+  // build a checkbox event object for label click
+  const createEventObject = () => ({
     target: {
       name,
       checked: !checked,
     },
   });
 
-  const fakeEvent = compose(onChange, createFakeEvent);
+  // mimic the event when a label is clicked on a checkbox
+  const dispatchEvent = compose(onChange, createEventObject);
 
   return (
     <>
@@ -38,7 +42,7 @@ export const DefaultCheckbox = ({
           aria-label={label ? label : removeCamelCase(name)}
           className="checkbox__label"
           id={concat(name, hash)}
-          onClick={fakeEvent}
+          onClick={dispatchEvent}
         >
           {label ? label : removeCamelCase(name)}
         </span>
