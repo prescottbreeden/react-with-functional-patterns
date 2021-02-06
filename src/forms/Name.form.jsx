@@ -4,9 +4,15 @@ import { DefaultInput } from "../common/DefaultInput.common";
 import { eventNameValue, through } from "../utils";
 import { NameValidations } from "../validations/Name.validations";
 
-export const NameForm = ({ onChange, data, submitFailed }) => {
+export const NameForm = ({ onChange, data, submitFailed, validationState }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const { getError, validate, validateAll, validateIfTrue } = NameValidations();
+  const {
+    forceValidationState,
+    getError,
+    validate,
+    validateAll,
+    validateIfTrue,
+  } = NameValidations();
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
@@ -27,7 +33,10 @@ export const NameForm = ({ onChange, data, submitFailed }) => {
 
   // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
-    submitFailed && validateAll(data);
+    if (submitFailed) {
+      validateAll(data);
+      forceValidationState(validationState);
+    }
   }, [submitFailed]); // eslint-disable-line
 
   return (

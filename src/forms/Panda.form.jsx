@@ -8,9 +8,18 @@ import { DynamicForm } from "../components/DynamicForm.component";
 import { PandaValidations } from "../validations/Panda.validations";
 import { emptyFriend } from "../models/friend.model";
 
-export const PandaForm = ({ onChange, data, submitFailed }) => {
+export const PandaForm = ({
+  onChange,
+  data,
+  submitFailed,
+  validationState,
+}) => {
   // --[ dependencies ]--------------------------------------------------------
-  const { validateAll, validateIfTrue } = PandaValidations();
+  const {
+    forceValidationState,
+    validateAll,
+    validateIfTrue,
+  } = PandaValidations();
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
@@ -49,7 +58,10 @@ export const PandaForm = ({ onChange, data, submitFailed }) => {
 
   // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
-    submitFailed && validateAll(data);
+    if (submitFailed) {
+      validateAll(data);
+      forceValidationState(validationState);
+    }
   }, [submitFailed]); // eslint-disable-line
 
   return (

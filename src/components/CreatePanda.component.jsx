@@ -5,7 +5,7 @@ import { randomString, through, trace } from "../utils";
 import { PandaValidations } from "../validations/Panda.validations";
 import { useToggle } from "../hooks/useToggle.hook";
 import { PandaForm } from "../forms/Panda.form";
-import { FlexRow } from "../layouts";
+import { Error, FlexRow } from "../layouts";
 import { handleMockApiResponse, mockAPI } from "../apiFaker";
 
 export const CreatePanda = () => {
@@ -16,6 +16,7 @@ export const CreatePanda = () => {
     validateAll,
     validateAllIfTrue,
     validationErrors,
+    validationState,
   } = PandaValidations();
 
   // --[ local state ]---------------------------------------------------------
@@ -81,7 +82,9 @@ export const CreatePanda = () => {
         </FlexRow>
         <button onClick={() => handleSubmit(panda)}>Submit</button>
         {!isValid &&
-          validationErrors.map((error) => <p key={randomString()}>{error}</p>)}
+          validationErrors.map((error) => (
+            <Error key={randomString()}>{error}</Error>
+          ))}
       </fieldset>
     </section>
   );

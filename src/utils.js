@@ -7,6 +7,9 @@ export const set = curry((property, value) => ({ [property]: value }));
 export const trace = curry((msg, x) => console.log(msg, x) || x);
 
 // through :: [fn] -> x -> [fn(x)]
+// A Wolfram Alpha inspired function that takes a list of functions
+// and applies and maps an argument to each function -- excellent for
+// executing a series of sideefffects with a single starting argument
 export const through = curry((list, x) => map(applyTo(x), list));
 
 // replaceItem :: [a] -> a -> [a]
@@ -53,45 +56,3 @@ export const eventNameChecked = compose(
   ),
   prop('target')
 );
-
-// -------------------------------------------------------------
-//      Demo purposes??
-// -------------------------------------------------------------
-export const validateAll = (errors, data) => {
-  return Object.keys(data).reduce((prev, current) => {
-    return {
-      ...prev,
-      [current]: {
-        error: errors[current].validation(data[current]),
-        validation: errors[current].validation,
-      }
-    };
-  }, {});
-};
-
-export const validateProp = curry((errors, data) => {
-  const name = Object.keys(data)[0];
-  return {
-    ...errors,
-    [name]: {
-      error: errors[name].validation(data[name]),
-      validation: errors[name].validation,
-    }
-  }
-});
-
-export const validatePropIfTrue = curry((errors, data) => {
-  const name = Object.keys(data)[0];
-  if (errors[name].validation(data[name]) === '') {
-    return {
-      ...errors,
-      [name]: {
-        error: errors[name].validation(data[name]),
-        validation: errors[name].validation,
-      }
-    }
-  } else {
-    return errors;
-  }
-});
-

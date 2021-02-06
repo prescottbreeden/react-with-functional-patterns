@@ -16,6 +16,7 @@ export const CreateName = () => {
     validateAll,
     validateAllIfTrue,
     validationErrors,
+    validationState,
   } = NameValidations();
 
   // --[ local state ]---------------------------------------------------------
@@ -35,10 +36,17 @@ export const CreateName = () => {
     setName
   ]);
 
+  // "error" -> see mock API errors
+  // "success" -> see no mock API errors
   // dispatchPayload :: Name -> void
   const dispatchPayload = async (payload) => {
     mockAPI("error", payload)
-      .then(handleMockApiResponse(forceValidationState))
+      .then(
+        through([
+          handleMockApiResponse(forceValidationState),
+          activateValidationErrors,
+        ])
+      )
       .catch(trace("whoopsies"));
   };
 
@@ -73,6 +81,7 @@ export const CreateName = () => {
               data={name}
               onChange={handleChange}
               submitFailed={hasValidationErrors}
+              validationState={validationState}
             />
           </div>
           <div style={{ width: "50%", marginLeft: "2rem" }}>

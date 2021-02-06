@@ -5,9 +5,15 @@ import { NameForm } from "../forms/Name.form";
 import { set, eventNameValue, through } from "../utils";
 import { FriendValidations } from "../validations/Friend.validations";
 
-export const FriendForm = ({ onChange, submitFailed, data }) => {
+export const FriendForm = ({
+  onChange,
+  submitFailed,
+  data,
+  validationState,
+}) => {
   // --[ dependencies ]--------------------------------------------------------
   const {
+    forceValidationState,
     getError,
     validate,
     validateAll,
@@ -36,7 +42,10 @@ export const FriendForm = ({ onChange, submitFailed, data }) => {
 
   // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
-    submitFailed && validateAll(data);
+    if (submitFailed) {
+      validateAll(data);
+      forceValidationState(validationState);
+    }
   }, [submitFailed]); // eslint-disable-line
 
   return (

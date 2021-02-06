@@ -1,49 +1,56 @@
 import { any, compose, equals, ifElse } from "ramda";
-import { trace } from "./utils";
-
-const badName = {
-  firstName: {
-    isValid: false,
-    errors: ["Rubber baby buggy bummpers"],
-  },
-  lastName: {
-    isValid: true,
-    errors: [],
-  },
-};
-
-const goodName = {
-  firstName: {
-    isValid: true,
-    errors: [],
-  },
-  lastName: {
-    isValid: true,
-    errors: [],
-  },
-};
+import { removeCamelCase, trace } from "./utils";
 
 /* prettier-ignore */
-export const handleMockApiResponse = (forceValidationState) =>
+const hasValidationError = 
   compose(
-    ifElse(
-      compose(
-        any(equals(false)), 
-        (data) => Object.keys(data).map((item) => data[item].isValid)
-      ),
-      forceValidationState,
-      trace("no errors!")
-    ),
-    trace("response recieved")
+    any(equals(false)), 
+    (data) => Object.keys(data).map((item) => data[item].isValid)
+  );
+
+export const handleMockApiResponse = (forceValidationState) =>
+  ifElse(
+    hasValidationError,
+    compose(forceValidationState, trace("API fail")),
+    trace("no API errors")
   );
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+const generateErrors = (payload) => {
+  return Object.keys(payload).reduce((acc, curr) => {
+    return {
+      ...acc,
+      [curr]: {
+        isValid: false,
+        errors: [
+          `${removeCamelCase(curr)} - mock API error: "${
+            payload[curr]
+          }" is a terrible value.`,
+        ],
+      },
+    };
+  }, {});
+};
+const generateSuccess = (payload) => {
+  return Object.keys(payload).reduce((acc, curr) => {
+    if (curr === "id") return acc;
+    return {
+      ...acc,
+      [curr]: {
+        isValid: true,
+        errors: [],
+      },
+    };
+  }, {});
+};
+
 export const mockAPI = async (status, payload) => {
   console.log("dispatched payload: ", payload);
-  // reduce custom payload responses
   await delay(1000);
-  return equals(status, "error") ? badName : goodName;
+  return equals(status, "error")
+    ? generateErrors(payload)
+    : generateSuccess(payload);
 };

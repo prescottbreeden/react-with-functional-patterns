@@ -4,14 +4,17 @@ import { DefaultCheckbox } from "../common/DefaultCheckbox.common";
 import { eventNameChecked, through } from "../utils";
 import { FoodFormValidations } from "../validations/FoodForm.validations";
 
-export const FoodForm = ({ onChange, data, submitFailed }) => {
+export const FoodForm = ({ onChange, data, submitFailed, validationState }) => {
+  // --[ dependencies ]--------------------------------------------------------
   const {
+    forceValidationState,
     getError,
     validate,
     validateAll,
     validateIfTrue,
   } = FoodFormValidations();
 
+  // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
   const get = prop(__, data);
 
@@ -29,7 +32,10 @@ export const FoodForm = ({ onChange, data, submitFailed }) => {
   const handleChange = through([validateEvent(validateIfTrue), updateState]);
 
   useEffect(() => {
-    submitFailed && validateAll(data);
+    if (submitFailed) {
+      validateAll(data);
+      forceValidationState(validationState);
+    }
   }, [submitFailed]); // eslint-disable-line
 
   return (
