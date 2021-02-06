@@ -5,29 +5,27 @@ import { eventNameValue, through } from "../utils";
 import { NameValidations } from "../validations/Name.validations";
 
 export const NameForm = ({ onChange, data, submitFailed }) => {
+  // --[ dependencies ]--------------------------------------------------------
   const { getError, validate, validateAll, validateIfTrue } = NameValidations();
 
+  // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
   const get = prop(__, data);
 
-  // handleBlur :: DefaultInputEvent -> void
-  const handleBlur = compose(
-    converge(validate, [compose(head, keys), mergeRight(data)]),
-    eventNameValue
-  );
+  // validateEvent :: validationFunction -> event -> void
+  const validateEvent = (func) =>
+    compose(
+      converge(func, [compose(head, keys), mergeRight(data)]),
+      eventNameValue
+    );
 
-  // validateChange :: DefaultInputEvent -> void
-  const validateChange = compose(
-    converge(validateIfTrue, [compose(head, keys), mergeRight(data)]),
-    eventNameValue
-  );
-
-  // updateState :: DefaultInputEvent -> void
+  // updateState :: event -> void
   const updateState = compose(onChange, mergeRight(data), eventNameValue);
 
-  // handleChange :: DefaultInputEvent -> void
-  const handleChange = through([validateChange, updateState]);
+  // handleChange :: event -> void
+  const handleChange = through([validateEvent(validateIfTrue), updateState]);
 
+  // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
     submitFailed && validateAll(data);
   }, [submitFailed]); // eslint-disable-line
@@ -40,20 +38,20 @@ export const NameForm = ({ onChange, data, submitFailed }) => {
           <DefaultInput
             error={getError("firstName")}
             name="firstName"
-            onBlur={handleBlur}
+            onBlur={validateEvent(validate)}
             onChange={handleChange}
             value={get("firstName")}
           />
           <DefaultInput
             error={getError("lastName")}
             name="lastName"
-            onBlur={handleBlur}
+            onBlur={validateEvent(validate)}
             onChange={handleChange}
             value={get("lastName")}
           />
           <DefaultInput
             name="middleName"
-            onBlur={handleBlur}
+            onBlur={validateEvent(validate)}
             onChange={handleChange}
             value={get("middleName")}
           />

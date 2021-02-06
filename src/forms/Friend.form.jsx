@@ -6,6 +6,7 @@ import { set, eventNameValue, through } from "../utils";
 import { FriendValidations } from "../validations/Friend.validations";
 
 export const FriendForm = ({ onChange, submitFailed, data }) => {
+  // --[ dependencies ]--------------------------------------------------------
   const {
     getError,
     validate,
@@ -13,32 +14,31 @@ export const FriendForm = ({ onChange, submitFailed, data }) => {
     validateIfTrue,
   } = FriendValidations();
 
+  // --[ component logic ]-----------------------------------------------------
+  // get :: string -> data[string]
+  const get = prop(__, data);
+
+  // validateEvent :: validationFunction -> event -> void
+  const validateEvent = (func) =>
+    compose(
+      converge(func, [compose(head, keys), mergeRight(data)]),
+      eventNameValue
+    );
+
+  // updateState :: event -> void
+  const updateState = compose(onChange, mergeRight(data), eventNameValue);
+
+  // handleChange :: event -> void
+  const handleChange = through([validateEvent(validateIfTrue), updateState]);
+
   // handleNameChange :: Name -> void
   const handleNameChange = compose(onChange, mergeRight(data), set("name"));
 
-  // handleBlur :: DefaultInputEvent -> void
-  const handleBlur = compose(
-    converge(validate, [compose(head, keys), mergeRight(data)]),
-    eventNameValue
-  );
-
-  // validateChange :: DefaultInputEvent -> void
-  const validateChange = compose(
-    converge(validateIfTrue, [compose(head, keys), mergeRight(data)]),
-    eventNameValue
-  );
-
-  // updateState :: DefaultInputEvent -> void
-  const updateState = compose(onChange, mergeRight(data), eventNameValue);
-
-  // handleChange :: DefaultInputEvent -> void
-  const handleChange = through([validateChange, updateState]);
-
+  // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
     submitFailed && validateAll(data);
   }, [submitFailed]); // eslint-disable-line
 
-  const get = prop(__, data);
   return (
     <>
       <fieldset>
@@ -52,7 +52,7 @@ export const FriendForm = ({ onChange, submitFailed, data }) => {
           <DefaultInput
             error={getError("lengthOfFriendship")}
             name="lengthOfFriendship"
-            onBlur={handleBlur}
+            onBlur={validateEvent(validate)}
             onChange={handleChange}
             value={get("lengthOfFriendship")}
           />

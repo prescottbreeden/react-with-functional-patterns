@@ -1,22 +1,22 @@
 import { compose, cond as firstMatch } from "ramda";
 import React, { useState } from "react";
-import { emptyPanda } from "../models/panda.model";
 import { randomString, through, trace } from "../utils";
-import { PandaValidations } from "../validations/Panda.validations";
 import { useToggle } from "../hooks/useToggle.hook";
-import { PandaForm } from "../forms/Panda.form";
+import { FriendValidations } from "../validations/Friend.validations";
+import { FriendForm } from "../forms/Friend.form";
+import { emptyFriend } from "../models/friend.model";
 
-export const CreatePanda = () => {
+export const CreateFriend = () => {
   // --[ dependencies ]--------------------------------------------------------
   const {
     isValid,
     validateAll,
     validateAllIfTrue,
     validationErrors,
-  } = PandaValidations();
+  } = FriendValidations();
 
   // --[ local state ]---------------------------------------------------------
-  const [panda, setPanda] = useState(emptyPanda());
+  const [friend, setFriend] = useState(emptyFriend());
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -24,25 +24,26 @@ export const CreatePanda = () => {
   ] = useToggle(false);
 
   // --[ component logic ]-----------------------------------------------------
-  // handleChange :: Panda -> void
-  const handleChange = through([validateAllIfTrue, setPanda]);
 
-  // dispatchPayload :: Panda -> void
+  // handleChange :: Friend -> void
+  const handleChange = through([validateAllIfTrue, setFriend]);
+
+  // dispatchPayload :: Friend -> void
   const dispatchPayload = compose(
     trace("handling potential errors"),
     trace("sending payload")
   );
 
-  // onFailure :: Panda -> void
+  // onFailure :: Friend -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
-  // onSuccess :: Panda -> void
+  // onSuccess :: Friend -> void
   const onSuccess = through([dispatchPayload, deactivateValidationErrors]);
 
-  // handleSubmit :: Panda -> fn(Panda)
+  // handleSubmit :: Friend -> fn(Friend)
   const handleSubmit = firstMatch([
     [validateAll, onSuccess],
     [(_) => true, onFailure],
@@ -50,15 +51,15 @@ export const CreatePanda = () => {
 
   return (
     <section>
-      <h1>Let's make a panda!</h1>
+      <h1>Let's make a Friend!</h1>
       <fieldset>
-        <legend>CreatePanda.component.jsx</legend>
-        <PandaForm
-          data={panda}
+        <legend>CreateFriend.component.jsx</legend>
+        <FriendForm
+          data={friend}
           onChange={handleChange}
           submitFailed={hasValidationErrors}
         />
-        <button onClick={() => handleSubmit(panda)}>Submit</button>
+        <button onClick={() => handleSubmit(friend)}>Submit</button>
         {!isValid &&
           validationErrors.map((error) => <p key={randomString()}>{error}</p>)}
       </fieldset>

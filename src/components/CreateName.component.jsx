@@ -1,22 +1,22 @@
 import { compose, cond as firstMatch } from "ramda";
 import React, { useState } from "react";
-import { emptyPanda } from "../models/panda.model";
 import { randomString, through, trace } from "../utils";
-import { PandaValidations } from "../validations/Panda.validations";
 import { useToggle } from "../hooks/useToggle.hook";
-import { PandaForm } from "../forms/Panda.form";
+import { NameValidations } from "../validations/Name.validations";
+import { NameForm } from "../forms/Name.form";
+import { emptyName } from "../models/name.model";
 
-export const CreatePanda = () => {
+export const CreateName = () => {
   // --[ dependencies ]--------------------------------------------------------
   const {
     isValid,
     validateAll,
     validateAllIfTrue,
     validationErrors,
-  } = PandaValidations();
+  } = NameValidations();
 
   // --[ local state ]---------------------------------------------------------
-  const [panda, setPanda] = useState(emptyPanda());
+  const [name, setName] = useState(emptyName());
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -24,25 +24,26 @@ export const CreatePanda = () => {
   ] = useToggle(false);
 
   // --[ component logic ]-----------------------------------------------------
-  // handleChange :: Panda -> void
-  const handleChange = through([validateAllIfTrue, setPanda]);
 
-  // dispatchPayload :: Panda -> void
+  // handleChange :: Name -> void
+  const handleChange = through([validateAllIfTrue, setName]);
+
+  // dispatchPayload :: Name -> void
   const dispatchPayload = compose(
     trace("handling potential errors"),
     trace("sending payload")
   );
 
-  // onFailure :: Panda -> void
+  // onFailure :: Name -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
-  // onSuccess :: Panda -> void
+  // onSuccess :: Name -> void
   const onSuccess = through([dispatchPayload, deactivateValidationErrors]);
 
-  // handleSubmit :: Panda -> fn(Panda)
+  // handleSubmit :: Name -> fn(Name)
   const handleSubmit = firstMatch([
     [validateAll, onSuccess],
     [(_) => true, onFailure],
@@ -50,15 +51,15 @@ export const CreatePanda = () => {
 
   return (
     <section>
-      <h1>Let's make a panda!</h1>
+      <h1>Let's make a Name!</h1>
       <fieldset>
-        <legend>CreatePanda.component.jsx</legend>
-        <PandaForm
-          data={panda}
+        <legend>CreateName.component.jsx</legend>
+        <NameForm
+          data={name}
           onChange={handleChange}
           submitFailed={hasValidationErrors}
         />
-        <button onClick={() => handleSubmit(panda)}>Submit</button>
+        <button onClick={() => handleSubmit(name)}>Submit</button>
         {!isValid &&
           validationErrors.map((error) => <p key={randomString()}>{error}</p>)}
       </fieldset>

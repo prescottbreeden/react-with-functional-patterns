@@ -15,23 +15,18 @@ export const FoodForm = ({ onChange, data, submitFailed }) => {
   // get :: string -> data[string]
   const get = prop(__, data);
 
-  // handleBlur :: InputEvent -> void
-  const handleBlur = compose(
-    converge(validate, [always("isChecked"), always(data)]),
-    eventNameChecked
-  );
-
-  // validateChange :: InputEvent -> void
-  const validateChange = compose(
-    converge(validateIfTrue, [always("isChecked"), mergeRight(data)]),
-    eventNameChecked
-  );
+  // validateEvent :: validationFunction -> event -> void
+  const validateEvent = (func) =>
+    compose(
+      converge(func, [always("isChecked"), mergeRight(data)]),
+      eventNameChecked
+    );
 
   // updateState :: InputEvent -> void
   const updateState = compose(onChange, mergeRight(data), eventNameChecked);
 
   // handleChange :: InputEvent -> void
-  const handleChange = through([validateChange, updateState]);
+  const handleChange = through([validateEvent(validateIfTrue), updateState]);
 
   useEffect(() => {
     submitFailed && validateAll(data);
@@ -45,19 +40,19 @@ export const FoodForm = ({ onChange, data, submitFailed }) => {
           <DefaultCheckbox
             checked={get("bambooLeaves")}
             name="bambooLeaves"
-            onBlur={handleBlur}
+            onBlur={validateEvent(validate)}
             onChange={handleChange}
           />
           <DefaultCheckbox
             checked={get("bambooShoots")}
             name="bambooShoots"
-            onBlur={handleBlur}
+            onBlur={validateEvent(validate)}
             onChange={handleChange}
           />
           <DefaultCheckbox
             checked={get("bambooStems")}
             name="bambooStems"
-            onBlur={handleBlur}
+            onBlur={validateEvent(validate)}
             onChange={handleChange}
           />
           {getError("isChecked") && <p role="alert">{getError("isChecked")}</p>}

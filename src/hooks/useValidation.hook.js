@@ -188,6 +188,28 @@ export const useValidation = (validationSchema) => {
   };
 
   /**
+   * Runs all validations against an object with all values and updates/returns
+   * isValid state.
+   * @param state any an object that contains all values to be validated
+   * @param props string[] property names to check (optional)
+   * @return boolean
+   */
+  const validateAllIfTrue = (state, props = Object.keys(validationSchema)) => {
+    const newState = reduce(
+      (acc, property) => {
+        const updated = runAllValidators(property, state);
+        return updated[property].isValid
+          ? { ...acc, ...updated }
+          : { ...acc, ...validationState[property] };
+      },
+      {},
+      props
+    );
+    setValidationState({ ...validationState, ...newState });
+    return allValid(newState);
+  };
+
+  /**
    * Get the current error stored for a property on the validation object.
    * @param property the name of the property to retrieve
    * @return string
@@ -266,6 +288,7 @@ export const useValidation = (validationSchema) => {
     resetValidationState,
     validate,
     validateAll,
+    validateAllIfTrue,
     validateCustom,
     validateIfTrue,
     validateOnBlur,

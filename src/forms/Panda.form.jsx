@@ -1,6 +1,6 @@
 import { __, compose, prop, mergeRight, converge, always } from "ramda";
 import React, { useEffect } from "react";
-import { replaceArrayItem, set, through, trace } from "../utils";
+import { replaceArrayItem, set, through } from "../utils";
 import { FoodForm } from "../forms/Food.form";
 import { NameForm } from "../forms/Name.form";
 import { FriendForm } from "../forms/Friend.form";
@@ -9,40 +9,45 @@ import { PandaValidations } from "../validations/Panda.validations";
 import { emptyFriend } from "../models/friend.model";
 
 export const PandaForm = ({ onChange, data, submitFailed }) => {
+  // --[ dependencies ]--------------------------------------------------------
   const { validateAll, validateIfTrue } = PandaValidations();
 
+  // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
   const get = prop(__, data);
 
-  // validateChange :: Name | Food | [Friend] -> void
-  const validateChange = (name) =>
-    compose(converge(validateIfTrue, [always(name), mergeRight(data)]));
-
-  // updateModel :: Name | Food | [Friend] -> { Name | Food | [Friend] }
-  // lambda expressions stored in dictionary by submodel names
+  // updateModel[model] :: Partial<Panda> -> { Partial<Panda> }
   const updateModel = {
     name: set("name"),
     food: set("food"),
     friends: compose(set("friends"), replaceArrayItem(get("friends"), "id")),
   };
 
-  // handleChange :: string -> Name | Food | [Friend] -> void
+  // validateChange :: string -> Partial<Panda> -> void
+  const validateChange = (name) =>
+    converge(validateIfTrue, [always(name), mergeRight(data)]);
+
+  // handleChange :: string -> Partial<Panda> -> void
   const handleChange = (name) =>
-    through([validateChange(name), compose(onChange, updateModel[name])]);
+    through([
+      validateChange(name),
+      compose(onChange, mergeRight(data), updateModel[name]),
+    ]);
 
   // addFriend :: () -> void
-  const _addFriend = (_) =>
+  const addFriend = (_) =>
     onChange({
       ...data,
-      friends: [...data.friends, emptyFriend()],
+      friends: [...get("friends"), emptyFriend()],
     });
 
   // removeFriend :: friend -> void
-  const _removeFriend = (friend) => {
-    const friends = data.friends.filter((f) => f.id !== friend.id);
+  const removeFriend = (friend) => {
+    const friends = get("friends").filter((f) => f.id !== friend.id);
     onChange({ ...data, friends });
   };
 
+  // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
     submitFailed && validateAll(data);
   }, [submitFailed]); // eslint-disable-line
@@ -63,13 +68,13 @@ export const PandaForm = ({ onChange, data, submitFailed }) => {
         />
         <h2>Add friends for your panda</h2>
         <DynamicForm
-          addForm={_addFriend}
+          addForm={addFriend}
           entity="Friend"
           form={FriendForm}
           items={get("friends")}
           formKey="id"
           onChange={handleChange("friends")}
-          removeForm={_removeFriend}
+          removeForm={removeFriend}
           submitFailed={submitFailed}
         />
       </fieldset>
