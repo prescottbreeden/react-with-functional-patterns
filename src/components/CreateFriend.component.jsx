@@ -5,7 +5,7 @@ import { useToggle } from "../hooks/useToggle.hook";
 import { FriendValidations } from "../validations/Friend.validations";
 import { FriendForm } from "../forms/Friend.form";
 import { emptyFriend } from "../models/friend.model";
-import {FlexRow} from "../layouts";
+import { FlexRow } from "../layouts";
 import { handleMockApiResponse, mockAPI } from "../apiFaker";
 
 export const CreateFriend = () => {
@@ -28,24 +28,33 @@ export const CreateFriend = () => {
 
   // --[ component logic ]-----------------------------------------------------
 
+  /* prettier-ignore */
   // handleChange :: Friend -> void
-  const handleChange = through([validateAllIfTrue, setFriend]);
+  const handleChange = through([
+    validateAllIfTrue,
+    setFriend
+  ]);
 
   // dispatchPayload :: Friend -> void
   const dispatchPayload = async (payload) => {
-    mockAPI('error', payload)
+    mockAPI("error", payload)
       .then(handleMockApiResponse(forceValidationState))
-      .catch(trace('whoopsies'));
-  }
+      .catch(trace("whoopsies"));
+  };
 
+  /* prettier-ignore */
   // onFailure :: Friend -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
+  /* prettier-ignore */
   // onSuccess :: Friend -> void
-  const onSuccess = through([dispatchPayload, deactivateValidationErrors]);
+  const onSuccess = through([
+    dispatchPayload,
+    deactivateValidationErrors
+  ]);
 
   // handleSubmit :: Friend -> fn(Friend)
   const handleSubmit = firstMatch([
@@ -59,18 +68,16 @@ export const CreateFriend = () => {
       <fieldset>
         <legend>CreateFriend.component.jsx</legend>
         <FlexRow>
-          <div style={{ width: '50%' }}>
+          <div style={{ width: "50%" }}>
             <FriendForm
               data={friend}
               onChange={handleChange}
               submitFailed={hasValidationErrors}
             />
           </div>
-          <div style={{ width: '50%', marginLeft: '2rem' }}>
+          <div style={{ width: "50%", marginLeft: "2rem" }}>
             <h2>Friend State</h2>
-            <pre>
-              {JSON.stringify(friend, null, 2)}
-            </pre>
+            <pre>{JSON.stringify(friend, null, 2)}</pre>
           </div>
         </FlexRow>
         <button onClick={() => handleSubmit(friend)}>Submit</button>

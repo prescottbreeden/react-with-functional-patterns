@@ -28,22 +28,28 @@ export const CreateName = () => {
 
   // --[ component logic ]-----------------------------------------------------
 
+  /* prettier-ignore */
   // handleChange :: Name -> void
-  const handleChange = through([validateAllIfTrue, setName]);
+  const handleChange = through([
+    validateAllIfTrue,
+    setName
+  ]);
 
   // dispatchPayload :: Name -> void
   const dispatchPayload = async (payload) => {
-    mockAPI('error', payload)
+    mockAPI("error", payload)
       .then(handleMockApiResponse(forceValidationState))
-      .catch(trace('whoopsies'));
-  }
+      .catch(trace("whoopsies"));
+  };
 
+  /* prettier-ignore */
   // onFailure :: Name -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
+  /* prettier-ignore */
   // onSuccess :: Name -> void
   const onSuccess = through([
     dispatchPayload,
@@ -62,18 +68,16 @@ export const CreateName = () => {
       <fieldset>
         <legend>CreateName.component.jsx</legend>
         <FlexRow>
-          <div style={{ width: '50%' }}>
+          <div style={{ width: "50%" }}>
             <NameForm
               data={name}
               onChange={handleChange}
               submitFailed={hasValidationErrors}
             />
           </div>
-          <div style={{ width: '50%', marginLeft: '2rem' }}>
+          <div style={{ width: "50%", marginLeft: "2rem" }}>
             <h2>Name State</h2>
-            <pre>
-              {JSON.stringify(name, null, 2)}
-            </pre>
+            <pre>{JSON.stringify(name, null, 2)}</pre>
           </div>
         </FlexRow>
         <button onClick={() => handleSubmit(name)}>Submit</button>

@@ -4,45 +4,46 @@ import { trace } from "./utils";
 const badName = {
   firstName: {
     isValid: false,
-    errors: ['Rubber baby buggy bummpers']
+    errors: ["Rubber baby buggy bummpers"],
   },
   lastName: {
     isValid: true,
-    errors: []
-  }
+    errors: [],
+  },
 };
 
 const goodName = {
   firstName: {
     isValid: true,
-    errors: []
+    errors: [],
   },
   lastName: {
     isValid: true,
-    errors: []
-  }
+    errors: [],
+  },
 };
 
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-export const mockAPI = async (status, payload) => {
-  console.log('dispatched payload: ', payload)
-  // reduce custom payload responses
-  await delay(1000);
-  return equals(status, 'error') ? badName : goodName;
-};
-
+/* prettier-ignore */
 export const handleMockApiResponse = (forceValidationState) =>
   compose(
     ifElse(
       compose(
-        any(equals(false)),
-        (data) => Object.keys(data).map(item => data[item].isValid)
+        any(equals(false)), 
+        (data) => Object.keys(data).map((item) => data[item].isValid)
       ),
       forceValidationState,
-      trace('no errors!')
+      trace("no errors!")
     ),
-    trace('response recieved')
+    trace("response recieved")
   );
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export const mockAPI = async (status, payload) => {
+  console.log("dispatched payload: ", payload);
+  // reduce custom payload responses
+  await delay(1000);
+  return equals(status, "error") ? badName : goodName;
+};

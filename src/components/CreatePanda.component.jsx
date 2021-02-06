@@ -5,7 +5,7 @@ import { randomString, through, trace } from "../utils";
 import { PandaValidations } from "../validations/Panda.validations";
 import { useToggle } from "../hooks/useToggle.hook";
 import { PandaForm } from "../forms/Panda.form";
-import {FlexRow} from "../layouts";
+import { FlexRow } from "../layouts";
 import { handleMockApiResponse, mockAPI } from "../apiFaker";
 
 export const CreatePanda = () => {
@@ -27,24 +27,33 @@ export const CreatePanda = () => {
   ] = useToggle(false);
 
   // --[ component logic ]-----------------------------------------------------
+  /* prettier-ignore */
   // handleChange :: Panda -> void
-  const handleChange = through([validateAllIfTrue, setPanda]);
+  const handleChange = through([
+    validateAllIfTrue,
+    setPanda
+  ]);
 
   // dispatchPayload :: Panda -> void
   const dispatchPayload = async (payload) => {
-    mockAPI('error', payload)
+    mockAPI("error", payload)
       .then(handleMockApiResponse(forceValidationState))
-      .catch(trace('whoopsies'));
-  }
+      .catch(trace("whoopsies"));
+  };
 
+  /* prettier-ignore */
   // onFailure :: Panda -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
+  /* prettier-ignore */
   // onSuccess :: Panda -> void
-  const onSuccess = through([dispatchPayload, deactivateValidationErrors]);
+  const onSuccess = through([
+    dispatchPayload,
+    deactivateValidationErrors
+  ]);
 
   // handleSubmit :: Panda -> fn(Panda)
   const handleSubmit = firstMatch([
@@ -58,18 +67,16 @@ export const CreatePanda = () => {
       <fieldset>
         <legend>CreatePanda.component.jsx</legend>
         <FlexRow>
-          <div style={{ width: '50%' }}>
+          <div style={{ width: "50%" }}>
             <PandaForm
               data={panda}
               onChange={handleChange}
               submitFailed={hasValidationErrors}
             />
           </div>
-          <div style={{ width: '50%', marginLeft: '2rem' }}>
+          <div style={{ width: "50%", marginLeft: "2rem" }}>
             <h2>Panda State</h2>
-            <pre>
-              {JSON.stringify(panda, null, 2)}
-            </pre>
+            <pre>{JSON.stringify(panda, null, 2)}</pre>
           </div>
         </FlexRow>
         <button onClick={() => handleSubmit(panda)}>Submit</button>
