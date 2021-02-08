@@ -1,10 +1,16 @@
 import { __, compose, mergeRight, converge, keys, head, prop } from "ramda";
 import React, { useEffect } from "react";
-import { DefaultInput } from "../common/DefaultInput.common";
-import { eventNameValue, through } from "../utils";
+import { Field } from "../common/Field.common";
+import { maybe, through } from "../utils";
 import { NameValidations } from "../validations/Name.validations";
 
-export const NameForm = ({ onChange, data, submitFailed, validationState }) => {
+export const NameForm = ({
+  onChange,
+  data,
+  disabled = false,
+  submitFailed,
+  validationState,
+}) => {
   // --[ dependencies ]--------------------------------------------------------
   const {
     forceValidationState,
@@ -20,22 +26,23 @@ export const NameForm = ({ onChange, data, submitFailed, validationState }) => {
 
   // validateEvent :: validationFunction -> event -> void
   const validateEvent = (func) =>
-    compose(
-      converge(func, [compose(head, keys), mergeRight(data)]),
-      eventNameValue
-    );
+    converge(func, [compose(head, keys), mergeRight(data)]);
 
   // updateState :: event -> void
-  const updateState = compose(onChange, mergeRight(data), eventNameValue);
+  const updateState = compose(onChange, mergeRight(data));
 
+  /* prettier-ignore */
   // handleChange :: event -> void
-  const handleChange = through([validateEvent(validateIfTrue), updateState]);
+  const handleChange = through([
+    validateEvent(validateIfTrue),
+    updateState
+  ]);
 
   // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
     if (submitFailed) {
       validateAll(data);
-      forceValidationState(validationState);
+      maybe(validationState).map(forceValidationState);
     }
   }, [submitFailed]); // eslint-disable-line
 
@@ -44,21 +51,24 @@ export const NameForm = ({ onChange, data, submitFailed, validationState }) => {
       <fieldset>
         <legend>Name.form.jsx</legend>
         <div className="form__group">
-          <DefaultInput
+          <Field
             error={getError("firstName")}
+            disabled={disabled}
             name="firstName"
             onBlur={validateEvent(validate)}
             onChange={handleChange}
             value={get("firstName")}
           />
-          <DefaultInput
+          <Field
+            disabled={disabled}
             error={getError("lastName")}
             name="lastName"
             onBlur={validateEvent(validate)}
             onChange={handleChange}
             value={get("lastName")}
           />
-          <DefaultInput
+          <Field
+            disabled={disabled}
             name="middleName"
             onBlur={validateEvent(validate)}
             onChange={handleChange}

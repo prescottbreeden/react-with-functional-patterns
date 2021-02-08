@@ -5,10 +5,11 @@ import { randomString, through, trace } from "../utils";
 import { PandaValidations } from "../validations/Panda.validations";
 import { useToggle } from "../hooks/useToggle.hook";
 import { PandaForm } from "../forms/Panda.form";
-import { Error, FlexRow } from "../layouts";
+import { FlexRow } from "../layouts";
 import { handleMockApiResponse, mockAPI } from "../apiFaker";
+import { Error } from "../common/Error.common";
 
-export const CreatePanda = () => {
+export const CreatePanda = ({ disabled = false }) => {
   // --[ dependencies ]--------------------------------------------------------
   const {
     forceValidationState,
@@ -16,7 +17,6 @@ export const CreatePanda = () => {
     validateAll,
     validateAllIfTrue,
     validationErrors,
-    validationState,
   } = PandaValidations();
 
   // --[ local state ]---------------------------------------------------------
@@ -71,6 +71,7 @@ export const CreatePanda = () => {
           <div style={{ width: "50%" }}>
             <PandaForm
               data={panda}
+              disabled={disabled}
               onChange={handleChange}
               submitFailed={hasValidationErrors}
             />
@@ -80,10 +81,12 @@ export const CreatePanda = () => {
             <pre>{JSON.stringify(panda, null, 2)}</pre>
           </div>
         </FlexRow>
-        <button onClick={() => handleSubmit(panda)}>Submit</button>
+        <button disabled={disabled} onClick={() => handleSubmit(panda)}>
+          Submit
+        </button>
         {!isValid &&
           validationErrors.map((error) => (
-            <Error key={randomString()}>{error}</Error>
+            <Error key={randomString()} error={error} />
           ))}
       </fieldset>
     </section>

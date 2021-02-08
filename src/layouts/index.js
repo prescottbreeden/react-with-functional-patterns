@@ -23,11 +23,3 @@ export const Box = (props) => {
     </div>
   );
 };
-
-export const Error = (props) => {
-  return (
-    <p className="form__error" {...props}>
-      {props.children}
-    </p>
-  );
-};

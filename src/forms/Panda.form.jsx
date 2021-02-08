@@ -1,6 +1,6 @@
 import { __, compose, prop, mergeRight, converge, always } from "ramda";
 import React, { useEffect } from "react";
-import { replaceArrayItem, set, through } from "../utils";
+import { maybe, replaceArrayItem, set, through } from "../utils";
 import { FoodForm } from "../forms/Food.form";
 import { NameForm } from "../forms/Name.form";
 import { FriendForm } from "../forms/Friend.form";
@@ -11,6 +11,7 @@ import { emptyFriend } from "../models/friend.model";
 export const PandaForm = ({
   onChange,
   data,
+  disabled = false,
   submitFailed,
   validationState,
 }) => {
@@ -60,7 +61,7 @@ export const PandaForm = ({
   useEffect(() => {
     if (submitFailed) {
       validateAll(data);
-      forceValidationState(validationState);
+      maybe(validationState).map(forceValidationState);
     }
   }, [submitFailed]); // eslint-disable-line
 
@@ -70,17 +71,20 @@ export const PandaForm = ({
         <legend>Panda.form.jsx</legend>
         <NameForm
           data={get("name")}
+          disabled={disabled}
           onChange={handleChange("name")}
           submitFailed={submitFailed}
         />
         <FoodForm
           data={get("food")}
+          disabled={disabled}
           onChange={handleChange("food")}
           submitFailed={submitFailed}
         />
         <h2>Add friends for your panda</h2>
         <DynamicForm
           addForm={addFriend}
+          disabled={disabled}
           entity="Friend"
           form={FriendForm}
           items={get("friends")}

@@ -1,14 +1,15 @@
 import { __, compose, mergeRight, converge, keys, head, prop } from "ramda";
 import React, { useEffect } from "react";
-import { DefaultInput } from "../common/DefaultInput.common";
+import { Field } from "../common/Field.common";
 import { NameForm } from "../forms/Name.form";
-import { set, eventNameValue, through } from "../utils";
+import { maybe, set, through } from "../utils";
 import { FriendValidations } from "../validations/Friend.validations";
 
 export const FriendForm = ({
   onChange,
   submitFailed,
   data,
+  disabled = false,
   validationState,
 }) => {
   // --[ dependencies ]--------------------------------------------------------
@@ -24,27 +25,25 @@ export const FriendForm = ({
   // get :: string -> data[string]
   const get = prop(__, data);
 
-  // validateEvent :: validationFunction -> event -> void
+  // validateEvent :: validationFunction -> FieldEvent -> void
   const validateEvent = (func) =>
-    compose(
-      converge(func, [compose(head, keys), mergeRight(data)]),
-      eventNameValue
-    );
+    converge(func, [compose(head, keys), mergeRight(data)]);
 
-  // updateState :: event -> void
-  const updateState = compose(onChange, mergeRight(data), eventNameValue);
+  // updateState :: FieldEvent -> void
+  const updateState = compose(onChange, mergeRight(data));
 
-  // handleChange :: event -> void
-  const handleChange = through([validateEvent(validateIfTrue), updateState]);
-
-  // handleNameChange :: Name -> void
-  const handleNameChange = compose(onChange, mergeRight(data), set("name"));
+  /* prettier-ignore */
+  // handleChange :: FieldEvent -> void
+  const handleChange = through([
+    validateEvent(validateIfTrue),
+    updateState
+  ]);
 
   // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
     if (submitFailed) {
       validateAll(data);
-      forceValidationState(validationState);
+      maybe(validationState).map(forceValidationState);
     }
   }, [submitFailed]); // eslint-disable-line
 
@@ -54,11 +53,13 @@ export const FriendForm = ({
         <legend>Friend.form.jsx</legend>
         <div className="form__group">
           <NameForm
+            disabled={disabled}
             data={get("name")}
-            onChange={handleNameChange}
+            onChange={compose(handleChange, set("name"))}
             submitFailed={submitFailed}
           />
-          <DefaultInput
+          <Field
+            disabled={disabled}
             error={getError("lengthOfFriendship")}
             name="lengthOfFriendship"
             onBlur={validateEvent(validate)}

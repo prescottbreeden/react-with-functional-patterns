@@ -1,9 +1,10 @@
-import { compose, concat } from "ramda";
+import { always, compose, concat, ifElse } from "ramda";
 import React from "react";
-import { randomString, removeCamelCase } from "../utils";
+import { eventNameChecked, randomString, removeCamelCase } from "../utils";
+import { Error } from "./Error.common";
 
 export const DefaultCheckbox = ({
-  disabled,
+  disabled = false,
   error,
   label,
   name,
@@ -11,19 +12,20 @@ export const DefaultCheckbox = ({
   onChange,
   checked,
 }) => {
-  // random identifier for a11y
   const hash = randomString();
-
-  // build a checkbox event object for label click
   const createEventObject = () => ({
     target: {
       name,
       checked: !checked,
     },
   });
-
-  // mimic the event when a label is clicked on a checkbox
-  const dispatchEvent = compose(onChange, createEventObject);
+  const dispatchEvent = ifElse(
+    (_) => disabled,
+    always(null),
+    compose(onChange, eventNameChecked, createEventObject)
+  );
+  const handleBlur = compose(onBlur, eventNameChecked);
+  const handleChange = compose(onChange, eventNameChecked);
 
   return (
     <>
@@ -34,8 +36,8 @@ export const DefaultCheckbox = ({
           className="checkbox__input"
           disabled={disabled}
           name={name}
-          onBlur={onBlur}
-          onChange={onChange}
+          onBlur={handleBlur}
+          onChange={handleChange}
           type="checkbox"
         />
         <span
@@ -46,7 +48,7 @@ export const DefaultCheckbox = ({
         >
           {label ? label : removeCamelCase(name)}
         </span>
-        {error && <p role="alert">{error}</p>}
+        <Error error={error} />
       </div>
     </>
   );

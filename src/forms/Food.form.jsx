@@ -1,10 +1,17 @@
 import { __, compose, mergeRight, converge, prop, always } from "ramda";
 import React, { useEffect } from "react";
-import { DefaultCheckbox } from "../common/DefaultCheckbox.common";
-import { eventNameChecked, through } from "../utils";
+import { Error } from "../common/Error.common";
+import { Field } from "../common/Field.common";
+import { maybe, through } from "../utils";
 import { FoodFormValidations } from "../validations/FoodForm.validations";
 
-export const FoodForm = ({ onChange, data, submitFailed, validationState }) => {
+export const FoodForm = ({
+  onChange,
+  data,
+  disabled = false,
+  submitFailed,
+  validationState,
+}) => {
   // --[ dependencies ]--------------------------------------------------------
   const {
     forceValidationState,
@@ -20,21 +27,22 @@ export const FoodForm = ({ onChange, data, submitFailed, validationState }) => {
 
   // validateEvent :: validationFunction -> event -> void
   const validateEvent = (func) =>
-    compose(
-      converge(func, [always("isChecked"), mergeRight(data)]),
-      eventNameChecked
-    );
+    converge(func, [always("isChecked"), mergeRight(data)]);
 
   // updateState :: InputEvent -> void
-  const updateState = compose(onChange, mergeRight(data), eventNameChecked);
+  const updateState = compose(onChange, mergeRight(data));
 
+  /* prettier-ignore */
   // handleChange :: InputEvent -> void
-  const handleChange = through([validateEvent(validateIfTrue), updateState]);
+  const handleChange = through([
+    validateEvent(validateIfTrue),
+    updateState
+  ]);
 
   useEffect(() => {
     if (submitFailed) {
       validateAll(data);
-      forceValidationState(validationState);
+      maybe(validationState).map(forceValidationState);
     }
   }, [submitFailed]); // eslint-disable-line
 
@@ -43,25 +51,31 @@ export const FoodForm = ({ onChange, data, submitFailed, validationState }) => {
       <div className="form__group">
         <fieldset>
           <legend>Food.form.jsx</legend>
-          <DefaultCheckbox
+          <Field
             checked={get("bambooLeaves")}
+            disabled={disabled}
             name="bambooLeaves"
             onBlur={validateEvent(validate)}
             onChange={handleChange}
+            type="checkbox"
           />
-          <DefaultCheckbox
+          <Field
             checked={get("bambooShoots")}
+            disabled={disabled}
             name="bambooShoots"
             onBlur={validateEvent(validate)}
             onChange={handleChange}
+            type="checkbox"
           />
-          <DefaultCheckbox
+          <Field
             checked={get("bambooStems")}
+            disabled={disabled}
             name="bambooStems"
             onBlur={validateEvent(validate)}
             onChange={handleChange}
+            type="checkbox"
           />
-          {getError("isChecked") && <p role="alert">{getError("isChecked")}</p>}
+          <Error error={getError("isChecked")} />
         </fieldset>
       </div>
     </section>

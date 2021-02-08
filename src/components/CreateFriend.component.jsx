@@ -7,8 +7,9 @@ import { FriendForm } from "../forms/Friend.form";
 import { emptyFriend } from "../models/friend.model";
 import { FlexRow } from "../layouts";
 import { handleMockApiResponse, mockAPI } from "../apiFaker";
+import { Error } from "../common/Error.common";
 
-export const CreateFriend = () => {
+export const CreateFriend = ({ disabled = false }) => {
   // --[ dependencies ]--------------------------------------------------------
   const {
     forceValidationState,
@@ -71,6 +72,7 @@ export const CreateFriend = () => {
           <div style={{ width: "50%" }}>
             <FriendForm
               data={friend}
+              disabled={disabled}
               onChange={handleChange}
               submitFailed={hasValidationErrors}
             />
@@ -80,9 +82,13 @@ export const CreateFriend = () => {
             <pre>{JSON.stringify(friend, null, 2)}</pre>
           </div>
         </FlexRow>
-        <button onClick={() => handleSubmit(friend)}>Submit</button>
+        <button disabled={disabled} onClick={() => handleSubmit(friend)}>
+          Submit
+        </button>
         {!isValid &&
-          validationErrors.map((error) => <p key={randomString()}>{error}</p>)}
+          validationErrors.map((error) => (
+            <Error key={randomString()} error={error} />
+          ))}
       </fieldset>
     </section>
   );

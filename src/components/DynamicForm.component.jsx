@@ -4,6 +4,7 @@ import { FlexColumn, FlexRow } from "../layouts";
 
 export const DynamicForm = ({
   addForm,
+  disabled = false,
   entity,
   form,
   items = [],
@@ -22,12 +23,13 @@ export const DynamicForm = ({
             <div style={{ display: "flex" }} key={prop(formKey, data)}>
               {React.createElement(form, {
                 data,
+                disabled,
                 onChange,
                 resetValidation,
                 submitFailed,
               })}
               <div>
-                <button onClick={() => removeForm(data)}>
+                <button disabled={disabled} onClick={() => removeForm(data)}>
                   Remove {entity}
                 </button>
               </div>
@@ -35,7 +37,11 @@ export const DynamicForm = ({
           ))}
         </FlexColumn>
         <FlexRow>
-          <button onClick={addForm} className="button form__btn--add">
+          <button
+            disabled={disabled}
+            onClick={addForm}
+            className="button form__btn--add"
+          >
             Add {entity}
           </button>
         </FlexRow>

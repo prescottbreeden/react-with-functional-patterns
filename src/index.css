@@ -39,6 +39,11 @@ button {
 button:hover {
   cursor: pointer;
 }
+button:disabled {
+  cursor: not-allowed !important;
+  border-color: grey;
+  background-color: grey;
+}
 
 .App {
   padding: 2rem 4rem;

@@ -1,6 +1,7 @@
-import { concat } from "ramda";
+import { compose, concat } from "ramda";
 import React from "react";
-import { randomString, removeCamelCase } from "../utils";
+import { eventNameValue, randomString, removeCamelCase } from "../utils";
+import { Error } from "./Error.common";
 
 export const DefaultInput = ({
   disabled,
@@ -12,6 +13,8 @@ export const DefaultInput = ({
   value,
 }) => {
   const hash = randomString();
+  const handleBlur = compose(onBlur, eventNameValue);
+  const handleChange = compose(onChange, eventNameValue);
   return (
     <>
       <div className="form__group">
@@ -22,11 +25,11 @@ export const DefaultInput = ({
           disabled={disabled}
           id={concat(name, hash)}
           name={name}
-          onBlur={onBlur}
-          onChange={onChange}
+          onBlur={handleBlur}
+          onChange={handleChange}
           value={value}
         />
-        {error && <p role="alert">{error}</p>}
+        <Error error={error} />
       </div>
     </>
   );

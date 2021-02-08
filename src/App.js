@@ -1,5 +1,6 @@
-import {CreateFriend} from "./components/CreateFriend.component";
-import {CreateName} from "./components/CreateName.component";
+import { AuthWrap } from "./components/AuthWrap.component";
+import { CreateFriend } from "./components/CreateFriend.component";
+import { CreateName } from "./components/CreateName.component";
 import { CreatePanda } from "./components/CreatePanda.component";
 
 function App() {
@@ -7,7 +8,9 @@ function App() {
     <main className="App">
       <CreateName />
       <hr />
-      <CreateFriend />
+      <AuthWrap authorized={false}>
+        <CreateFriend />
+      </AuthWrap>
       <hr />
       <CreatePanda />
     </main>

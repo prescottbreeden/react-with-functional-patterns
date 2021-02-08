@@ -7,8 +7,9 @@ import { NameForm } from "../forms/Name.form";
 import { emptyName } from "../models/name.model";
 import { FlexRow } from "../layouts";
 import { handleMockApiResponse } from "../apiFaker";
+import { Error } from "../common/Error.common";
 
-export const CreateName = () => {
+export const CreateName = ({ disabled = false }) => {
   // --[ dependencies ]--------------------------------------------------------
   const {
     forceValidationState,
@@ -38,8 +39,8 @@ export const CreateName = () => {
 
   // dispatchPayload :: Name -> void
   const dispatchPayload = async (payload) => {
-    request('POST', payload)
-      .then(res => res.json())
+    request("POST", payload)
+      .then((res) => res.json())
       .then(mergeRight(validationState))
       .then(
         through([
@@ -48,7 +49,7 @@ export const CreateName = () => {
         ])
       )
       .catch(trace("whoopsies"));
-  }
+  };
 
   /* prettier-ignore */
   // onFailure :: Name -> void
@@ -79,6 +80,7 @@ export const CreateName = () => {
           <div style={{ width: "50%" }}>
             <NameForm
               data={name}
+              disabled={disabled}
               onChange={handleChange}
               submitFailed={hasValidationErrors}
               validationState={validationState}
@@ -89,9 +91,13 @@ export const CreateName = () => {
             <pre>{JSON.stringify(name, null, 2)}</pre>
           </div>
         </FlexRow>
-        <button onClick={() => handleSubmit(name)}>Submit</button>
+        <button disabled={disabled} onClick={() => handleSubmit(name)}>
+          Submit
+        </button>
         {!isValid &&
-          validationErrors.map((error) => <p key={randomString()}>{error}</p>)}
+          validationErrors.map((error) => (
+            <Error key={randomString()} error={error} />
+          ))}
       </fieldset>
     </section>
   );
