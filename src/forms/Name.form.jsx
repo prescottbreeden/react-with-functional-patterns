@@ -7,7 +7,7 @@ import { NameValidations } from "../validations/Name.validations";
 export const NameForm = ({
   onChange,
   data,
-  disabled = false,
+  disabled,
   submitFailed,
   validationState,
 }) => {

@@ -8,7 +8,7 @@ import { FoodFormValidations } from "../validations/FoodForm.validations";
 export const FoodForm = ({
   onChange,
   data,
-  disabled = false,
+  disabled,
   submitFailed,
   validationState,
 }) => {

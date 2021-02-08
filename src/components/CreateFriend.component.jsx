@@ -6,10 +6,10 @@ import { FriendValidations } from "../validations/Friend.validations";
 import { FriendForm } from "../forms/Friend.form";
 import { emptyFriend } from "../models/friend.model";
 import { FlexRow } from "../layouts";
-import { handleMockApiResponse, mockAPI } from "../apiFaker";
+import { handleApiResponse, mockAPI } from "../apiFaker";
 import { Error } from "../common/Error.common";
 
-export const CreateFriend = ({ disabled = false }) => {
+export const CreateFriend = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------
   const {
     forceValidationState,
@@ -39,7 +39,7 @@ export const CreateFriend = ({ disabled = false }) => {
   // dispatchPayload :: Friend -> void
   const dispatchPayload = async (payload) => {
     mockAPI("error", payload)
-      .then(handleMockApiResponse(forceValidationState))
+      .then(handleApiResponse(forceValidationState))
       .catch(trace("whoopsies"));
   };
 
@@ -65,7 +65,6 @@ export const CreateFriend = ({ disabled = false }) => {
 
   return (
     <section>
-      <h1>Let's make a Friend!</h1>
       <fieldset>
         <legend>CreateFriend.component.jsx</legend>
         <FlexRow>

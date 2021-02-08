@@ -9,7 +9,7 @@ export const FriendForm = ({
   onChange,
   submitFailed,
   data,
-  disabled = false,
+  disabled,
   validationState,
 }) => {
   // --[ dependencies ]--------------------------------------------------------

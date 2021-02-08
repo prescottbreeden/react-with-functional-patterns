@@ -4,7 +4,7 @@ import { DefaultCheckbox } from "./DefaultCheckbox.common.jsx";
 import { DefaultInput } from "./DefaultInput.common.jsx";
 
 export const Field = (props) => {
-  const buildComponent = curry((component, props, type) => {
+  const buildComponent = curry((component, props, _) => {
     return React.createElement(component, { ...props });
   });
 

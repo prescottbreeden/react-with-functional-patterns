@@ -8,7 +8,7 @@ const hasValidationError =
     (data) => Object.keys(data).map((item) => data[item].isValid)
   );
 
-export const handleMockApiResponse = (forceValidationState) =>
+export const handleApiResponse = (forceValidationState) =>
   ifElse(
     hasValidationError,
     compose(forceValidationState, trace("API fail")),

@@ -6,10 +6,10 @@ import { NameValidations } from "../validations/Name.validations";
 import { NameForm } from "../forms/Name.form";
 import { emptyName } from "../models/name.model";
 import { FlexRow } from "../layouts";
-import { handleMockApiResponse } from "../apiFaker";
+import { handleApiResponse } from "../apiFaker";
 import { Error } from "../common/Error.common";
 
-export const CreateName = ({ disabled = false }) => {
+export const CreateName = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------
   const {
     forceValidationState,
@@ -44,7 +44,7 @@ export const CreateName = ({ disabled = false }) => {
       .then(mergeRight(validationState))
       .then(
         through([
-          handleMockApiResponse(forceValidationState),
+          handleApiResponse(forceValidationState),
           activateValidationErrors,
         ])
       )
@@ -73,7 +73,6 @@ export const CreateName = ({ disabled = false }) => {
 
   return (
     <section>
-      <h1>Let's make a Name!</h1>
       <fieldset>
         <legend>CreateName.component.jsx</legend>
         <FlexRow>

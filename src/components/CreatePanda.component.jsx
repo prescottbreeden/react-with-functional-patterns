@@ -6,10 +6,10 @@ import { PandaValidations } from "../validations/Panda.validations";
 import { useToggle } from "../hooks/useToggle.hook";
 import { PandaForm } from "../forms/Panda.form";
 import { FlexRow } from "../layouts";
-import { handleMockApiResponse, mockAPI } from "../apiFaker";
+import { handleApiResponse, mockAPI } from "../apiFaker";
 import { Error } from "../common/Error.common";
 
-export const CreatePanda = ({ disabled = false }) => {
+export const CreatePanda = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------
   const {
     forceValidationState,
@@ -38,7 +38,7 @@ export const CreatePanda = ({ disabled = false }) => {
   // dispatchPayload :: Panda -> void
   const dispatchPayload = async (payload) => {
     mockAPI("error", payload)
-      .then(handleMockApiResponse(forceValidationState))
+      .then(handleApiResponse(forceValidationState))
       .catch(trace("whoopsies"));
   };
 
@@ -64,7 +64,6 @@ export const CreatePanda = ({ disabled = false }) => {
 
   return (
     <section>
-      <h1>Let's make a panda!</h1>
       <fieldset>
         <legend>CreatePanda.component.jsx</legend>
         <FlexRow>

@@ -1,13 +1,14 @@
-import { prop } from "ramda";
+import { map, prop } from "ramda";
 import React from "react";
 import { FlexColumn, FlexRow } from "../layouts";
+import { maybe } from '../utils';
 
 export const DynamicForm = ({
   addForm,
   disabled = false,
   entity,
   form,
-  items = [],
+  items,
   formKey,
   onChange,
   removeForm,
@@ -19,7 +20,7 @@ export const DynamicForm = ({
       <fieldset>
         <legend>DynamicForm.component.jsx</legend>
         <FlexColumn>
-          {items.map((data) => (
+          {maybe(items).map(map((data) => (
             <div style={{ display: "flex" }} key={prop(formKey, data)}>
               {React.createElement(form, {
                 data,
@@ -34,7 +35,7 @@ export const DynamicForm = ({
                 </button>
               </div>
             </div>
-          ))}
+          ))).join()}
         </FlexColumn>
         <FlexRow>
           <button

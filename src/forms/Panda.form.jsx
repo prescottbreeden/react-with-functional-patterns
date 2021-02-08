@@ -11,7 +11,7 @@ import { emptyFriend } from "../models/friend.model";
 export const PandaForm = ({
   onChange,
   data,
-  disabled = false,
+  disabled,
   submitFailed,
   validationState,
 }) => {
