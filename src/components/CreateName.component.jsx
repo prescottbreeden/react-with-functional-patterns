@@ -1,24 +1,16 @@
-import { cond as firstMatch, mergeRight } from "ramda";
+import { cond as firstMatch } from "ramda";
 import React, { useState } from "react";
-import { randomString, request, through, trace } from "../utils";
+import { handleApiResponse, request, through, trace } from "../utils";
 import { useToggle } from "../hooks/useToggle.hook";
 import { NameValidations } from "../validations/Name.validations";
 import { NameForm } from "../forms/Name.form";
 import { emptyName } from "../models/name.model";
-import { FlexRow } from "../layouts";
-import { handleApiResponse } from "../apiFaker";
-import { Error } from "../common/Error.common";
+import { DebugForm } from "../devTools/DebugForm.devtool";
+import { ValidationErrors } from "../common/ValidationErrors.common";
 
 export const CreateName = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const {
-    forceValidationState,
-    isValid,
-    validateAll,
-    validateAllIfTrue,
-    validationErrors,
-    validationState,
-  } = NameValidations();
+  const v = NameValidations();
 
   // --[ local state ]---------------------------------------------------------
   const [name, setName] = useState(emptyName());
@@ -30,35 +22,29 @@ export const CreateName = ({ disabled }) => {
 
   // --[ component logic ]-----------------------------------------------------
 
-  /* prettier-ignore */
   // handleChange :: Name -> void
   const handleChange = through([
-    validateAllIfTrue,
+    v.validateAllIfTrue,
     setName
   ]);
 
+  // handleSubmitResponse :: API JSON -> void
+  const handleSubmitResponse = handleApiResponse(v, activateValidationErrors);
+
   // dispatchPayload :: Name -> void
   const dispatchPayload = async (payload) => {
-    request("POST", payload)
+    request('name', "POST", payload)
       .then((res) => res.json())
-      .then(mergeRight(validationState))
-      .then(
-        through([
-          handleApiResponse(forceValidationState),
-          activateValidationErrors,
-        ])
-      )
+      .then(handleSubmitResponse)
       .catch(trace("whoopsies"));
   };
 
-  /* prettier-ignore */
   // onFailure :: Name -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
-  /* prettier-ignore */
   // onSuccess :: Name -> void
   const onSuccess = through([
     dispatchPayload,
@@ -67,7 +53,7 @@ export const CreateName = ({ disabled }) => {
 
   // handleSubmit :: Name -> fn(Name)
   const handleSubmit = firstMatch([
-    [validateAll, onSuccess],
+    [v.validateAll, onSuccess],
     [(_) => true, onFailure],
   ]);
 
@@ -75,28 +61,19 @@ export const CreateName = ({ disabled }) => {
     <section>
       <fieldset>
         <legend>CreateName.component.jsx</legend>
-        <FlexRow>
-          <div style={{ width: "50%" }}>
-            <NameForm
-              data={name}
-              disabled={disabled}
-              onChange={handleChange}
-              submitFailed={hasValidationErrors}
-              validationState={validationState}
-            />
-          </div>
-          <div style={{ width: "50%", marginLeft: "2rem" }}>
-            <h2>Name State</h2>
-            <pre>{JSON.stringify(name, null, 2)}</pre>
-          </div>
-        </FlexRow>
+        <DebugForm data={name} name="Name Form">
+          <NameForm
+            data={name}
+            disabled={disabled}
+            onChange={handleChange}
+            submitFailed={hasValidationErrors}
+            overrideValidationState={v.validationState}
+          />
+        </DebugForm>
         <button disabled={disabled} onClick={() => handleSubmit(name)}>
           Submit
         </button>
-        {!isValid &&
-          validationErrors.map((error) => (
-            <Error key={randomString()} error={error} />
-          ))}
+        <ValidationErrors {...v} />
       </fieldset>
     </section>
   );

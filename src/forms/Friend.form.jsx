@@ -10,16 +10,10 @@ export const FriendForm = ({
   submitFailed,
   data,
   disabled,
-  validationState,
+  overrideValidationState,
 }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const {
-    forceValidationState,
-    getError,
-    validate,
-    validateAll,
-    validateIfTrue,
-  } = FriendValidations();
+  const v = FriendValidations();
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
@@ -35,17 +29,17 @@ export const FriendForm = ({
   /* prettier-ignore */
   // handleChange :: FieldEvent -> void
   const handleChange = through([
-    validateEvent(validateIfTrue),
+    validateEvent(v.validateIfTrue),
     updateState
   ]);
 
   // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
     if (submitFailed) {
-      validateAll(data);
-      maybe(validationState).map(forceValidationState);
+      v.validateAll(data);
+      maybe(overrideValidationState).map(v.forceValidationState);
     }
-  }, [submitFailed]); // eslint-disable-line
+  }, [submitFailed, overrideValidationState]); // eslint-disable-line
 
   return (
     <>
@@ -60,9 +54,9 @@ export const FriendForm = ({
           />
           <Field
             disabled={disabled}
-            error={getError("lengthOfFriendship")}
+            error={v.getError("lengthOfFriendship")}
             name="lengthOfFriendship"
-            onBlur={validateEvent(validate)}
+            onBlur={validateEvent(v.validate)}
             onChange={handleChange}
             value={get("lengthOfFriendship")}
           />

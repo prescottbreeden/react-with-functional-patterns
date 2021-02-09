@@ -10,16 +10,10 @@ export const FoodForm = ({
   data,
   disabled,
   submitFailed,
-  validationState,
+  overrideValidationState,
 }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const {
-    forceValidationState,
-    getError,
-    validate,
-    validateAll,
-    validateIfTrue,
-  } = FoodFormValidations();
+  const v = FoodFormValidations();
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
@@ -32,19 +26,18 @@ export const FoodForm = ({
   // updateState :: InputEvent -> void
   const updateState = compose(onChange, mergeRight(data));
 
-  /* prettier-ignore */
   // handleChange :: InputEvent -> void
   const handleChange = through([
-    validateEvent(validateIfTrue),
+    validateEvent(v.validateIfTrue),
     updateState
   ]);
 
   useEffect(() => {
     if (submitFailed) {
-      validateAll(data);
-      maybe(validationState).map(forceValidationState);
+      v.validateAll(data);
+      maybe(overrideValidationState).map(v.forceValidationState);
     }
-  }, [submitFailed]); // eslint-disable-line
+  }, [submitFailed, overrideValidationState]); // eslint-disable-line
 
   return (
     <section>
@@ -55,7 +48,7 @@ export const FoodForm = ({
             checked={get("bambooLeaves")}
             disabled={disabled}
             name="bambooLeaves"
-            onBlur={validateEvent(validate)}
+            onBlur={validateEvent(v.validate)}
             onChange={handleChange}
             type="checkbox"
           />
@@ -63,7 +56,7 @@ export const FoodForm = ({
             checked={get("bambooShoots")}
             disabled={disabled}
             name="bambooShoots"
-            onBlur={validateEvent(validate)}
+            onBlur={validateEvent(v.validate)}
             onChange={handleChange}
             type="checkbox"
           />
@@ -71,11 +64,11 @@ export const FoodForm = ({
             checked={get("bambooStems")}
             disabled={disabled}
             name="bambooStems"
-            onBlur={validateEvent(validate)}
+            onBlur={validateEvent(v.validate)}
             onChange={handleChange}
             type="checkbox"
           />
-          <Error error={getError("isChecked")} />
+          <Error error={v.getError("isChecked")} />
         </fieldset>
       </div>
     </section>

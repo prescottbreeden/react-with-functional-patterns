@@ -1,7 +1,7 @@
 import { cond as firstMatch, curry, equals } from "ramda";
 import React from "react";
-import { DefaultCheckbox } from "./DefaultCheckbox.common.jsx";
-import { DefaultInput } from "./DefaultInput.common.jsx";
+import { FormCheckbox } from "./FormCheckbox.common.jsx";
+import { FormInput } from "./FormInput.common.jsx";
 
 export const Field = (props) => {
   const buildComponent = curry((component, props, _) => {
@@ -9,9 +9,9 @@ export const Field = (props) => {
   });
 
   const inputType = firstMatch([
-    [equals("text"), buildComponent(DefaultInput, props)],
-    [equals("checkbox"), buildComponent(DefaultCheckbox, props)],
-    [(_) => true, buildComponent(DefaultInput, props)],
+    [equals("text"), buildComponent(FormInput, props)],
+    [equals("checkbox"), buildComponent(FormCheckbox, props)],
+    [(_) => true, buildComponent(FormInput, props)],
   ]);
   return inputType(props.type);
 };

@@ -3,7 +3,7 @@ import React from "react";
 import { eventNameChecked, randomString, removeCamelCase } from "../utils";
 import { Error } from "./Error.common";
 
-export const DefaultCheckbox = ({
+export const FormCheckbox = ({
   disabled = false,
   error,
   label,

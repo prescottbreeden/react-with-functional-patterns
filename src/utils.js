@@ -1,4 +1,20 @@
-import {applyTo, compose, concat, converge, curry, head, identity, map, prop, replace, slice, toUpper} from "ramda";
+import {
+  any,
+  applyTo,
+  compose,
+  concat,
+  converge,
+  curry,
+  equals,
+  head,
+  identity,
+  ifElse,
+  map,
+  mergeDeepRight,
+  prop,
+  replace,
+  toUpper
+} from "ramda";
 
 // set :: string -> x -> { [string]: x }
 export const set = curry((property, value) => ({ [property]: value }));
@@ -57,15 +73,16 @@ export const eventNameChecked = compose(
   prop('target')
 );
 
-export const request = (method, payload) => {
+export const request = (url, method, payload) => {
+  const baseAPI = 'http://localhost:5000/api/';
   return method === 'GET'
-    ? fetch('http://localhost:5000/api/name', {
+    ? fetch(concat(baseAPI, url), {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
       })
-    : fetch('http://localhost:5000/api/name', {
+    : fetch(concat(baseAPI, url), {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -73,6 +90,27 @@ export const request = (method, payload) => {
         body: JSON.stringify(payload)
       });
 }
+
+const hasValidationError = 
+  compose(
+    any(equals(false)), 
+    (data) => Object.keys(data).map((item) => data[item].isValid)
+  );
+
+export const handleApiResponse = (
+  validationObject,
+  activateValidationErrors,
+) =>
+  ifElse(
+    hasValidationError,
+    compose(
+      activateValidationErrors,
+      validationObject.forceValidationState,
+      mergeDeepRight(validationObject.validationState),
+      trace("API fail")
+    ),
+    trace("no API errors")
+  );
 // ============================================================
 //                      -- Maybe --
 // ============================================================

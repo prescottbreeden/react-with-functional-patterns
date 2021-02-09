@@ -1,23 +1,16 @@
 import { cond as firstMatch } from "ramda";
 import React, { useState } from "react";
 import { emptyPanda } from "../models/panda.model";
-import { randomString, through, trace } from "../utils";
+import { handleApiResponse, request, through, trace } from "../utils";
 import { PandaValidations } from "../validations/Panda.validations";
 import { useToggle } from "../hooks/useToggle.hook";
 import { PandaForm } from "../forms/Panda.form";
-import { FlexRow } from "../layouts";
-import { handleApiResponse, mockAPI } from "../apiFaker";
-import { Error } from "../common/Error.common";
+import { DebugForm } from "../devTools/DebugForm.devtool";
+import { ValidationErrors } from "../common/ValidationErrors.common";
 
 export const CreatePanda = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const {
-    forceValidationState,
-    isValid,
-    validateAll,
-    validateAllIfTrue,
-    validationErrors,
-  } = PandaValidations();
+  const v = PandaValidations();
 
   // --[ local state ]---------------------------------------------------------
   const [panda, setPanda] = useState(emptyPanda());
@@ -28,28 +21,29 @@ export const CreatePanda = ({ disabled }) => {
   ] = useToggle(false);
 
   // --[ component logic ]-----------------------------------------------------
-  /* prettier-ignore */
   // handleChange :: Panda -> void
   const handleChange = through([
-    validateAllIfTrue,
+    v.validateAllIfTrue,
     setPanda
   ]);
 
+  // handleSubmitResponse :: API JSON -> void
+  const handleSubmitResponse = handleApiResponse(v, activateValidationErrors);
+
   // dispatchPayload :: Panda -> void
   const dispatchPayload = async (payload) => {
-    mockAPI("error", payload)
-      .then(handleApiResponse(forceValidationState))
+    request('panda', "POST", payload)
+      .then((res) => res.json())
+      .then(handleSubmitResponse)
       .catch(trace("whoopsies"));
   };
 
-  /* prettier-ignore */
   // onFailure :: Panda -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
-  /* prettier-ignore */
   // onSuccess :: Panda -> void
   const onSuccess = through([
     dispatchPayload,
@@ -58,7 +52,7 @@ export const CreatePanda = ({ disabled }) => {
 
   // handleSubmit :: Panda -> fn(Panda)
   const handleSubmit = firstMatch([
-    [validateAll, onSuccess],
+    [v.validateAll, onSuccess],
     [(_) => true, onFailure],
   ]);
 
@@ -66,27 +60,18 @@ export const CreatePanda = ({ disabled }) => {
     <section>
       <fieldset>
         <legend>CreatePanda.component.jsx</legend>
-        <FlexRow>
-          <div style={{ width: "50%" }}>
-            <PandaForm
-              data={panda}
-              disabled={disabled}
-              onChange={handleChange}
-              submitFailed={hasValidationErrors}
-            />
-          </div>
-          <div style={{ width: "50%", marginLeft: "2rem" }}>
-            <h2>Panda State</h2>
-            <pre>{JSON.stringify(panda, null, 2)}</pre>
-          </div>
-        </FlexRow>
+        <DebugForm data={panda} name="Panda Form">
+          <PandaForm
+            data={panda}
+            disabled={disabled}
+            onChange={handleChange}
+            submitFailed={hasValidationErrors}
+          />
+        </DebugForm>
         <button disabled={disabled} onClick={() => handleSubmit(panda)}>
           Submit
         </button>
-        {!isValid &&
-          validationErrors.map((error) => (
-            <Error key={randomString()} error={error} />
-          ))}
+        <ValidationErrors {...v} />
       </fieldset>
     </section>
   );

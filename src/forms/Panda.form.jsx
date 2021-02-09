@@ -4,7 +4,7 @@ import { maybe, replaceArrayItem, set, through } from "../utils";
 import { FoodForm } from "../forms/Food.form";
 import { NameForm } from "../forms/Name.form";
 import { FriendForm } from "../forms/Friend.form";
-import { DynamicForm } from "../components/DynamicForm.component";
+import { DynamicForm } from "../common/DynamicForm.common";
 import { PandaValidations } from "../validations/Panda.validations";
 import { emptyFriend } from "../models/friend.model";
 
@@ -13,14 +13,10 @@ export const PandaForm = ({
   data,
   disabled,
   submitFailed,
-  validationState,
+  overrideValidationState,
 }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const {
-    forceValidationState,
-    validateAll,
-    validateIfTrue,
-  } = PandaValidations();
+  const v = PandaValidations();
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
@@ -35,7 +31,7 @@ export const PandaForm = ({
 
   // validateChange :: string -> Partial<Panda> -> void
   const validateChange = (name) =>
-    converge(validateIfTrue, [always(name), mergeRight(data)]);
+    converge(v.validateIfTrue, [always(name), mergeRight(data)]);
 
   // handleChange :: string -> Partial<Panda> -> void
   const handleChange = (name) =>
@@ -60,10 +56,10 @@ export const PandaForm = ({
   // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
     if (submitFailed) {
-      validateAll(data);
-      maybe(validationState).map(forceValidationState);
+      v.validateAll(data);
+      maybe(overrideValidationState).map(v.forceValidationState);
     }
-  }, [submitFailed]); // eslint-disable-line
+  }, [submitFailed, overrideValidationState]); // eslint-disable-line
 
   return (
     <>

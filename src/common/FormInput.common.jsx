@@ -3,7 +3,7 @@ import React from "react";
 import { eventNameValue, randomString, removeCamelCase } from "../utils";
 import { Error } from "./Error.common";
 
-export const DefaultInput = ({
+export const FormInput = ({
   disabled,
   error,
   label,

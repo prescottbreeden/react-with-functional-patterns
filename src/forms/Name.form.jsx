@@ -9,16 +9,10 @@ export const NameForm = ({
   data,
   disabled,
   submitFailed,
-  validationState,
+  overrideValidationState,
 }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const {
-    forceValidationState,
-    getError,
-    validate,
-    validateAll,
-    validateIfTrue,
-  } = NameValidations();
+  const v = NameValidations();
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
@@ -34,17 +28,17 @@ export const NameForm = ({
   /* prettier-ignore */
   // handleChange :: event -> void
   const handleChange = through([
-    validateEvent(validateIfTrue),
+    validateEvent(v.validateIfTrue),
     updateState
   ]);
 
   // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
     if (submitFailed) {
-      validateAll(data);
-      maybe(validationState).map(forceValidationState);
+      v.validateAll(data);
+      maybe(overrideValidationState).map(v.forceValidationState);
     }
-  }, [submitFailed]); // eslint-disable-line
+  }, [submitFailed, overrideValidationState]); // eslint-disable-line
 
   return (
     <>
@@ -52,25 +46,25 @@ export const NameForm = ({
         <legend>Name.form.jsx</legend>
         <div className="form__group">
           <Field
-            error={getError("firstName")}
+            error={v.getError("firstName")}
             disabled={disabled}
             name="firstName"
-            onBlur={validateEvent(validate)}
+            onBlur={validateEvent(v.validate)}
             onChange={handleChange}
             value={get("firstName")}
           />
           <Field
             disabled={disabled}
-            error={getError("lastName")}
+            error={v.getError("lastName")}
             name="lastName"
-            onBlur={validateEvent(validate)}
+            onBlur={validateEvent(v.validate)}
             onChange={handleChange}
             value={get("lastName")}
           />
           <Field
             disabled={disabled}
             name="middleName"
-            onBlur={validateEvent(validate)}
+            onBlur={validateEvent(v.validate)}
             onChange={handleChange}
             value={get("middleName")}
           />

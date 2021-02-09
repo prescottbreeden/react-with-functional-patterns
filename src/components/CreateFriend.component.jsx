@@ -1,23 +1,16 @@
 import { cond as firstMatch } from "ramda";
 import React, { useState } from "react";
-import { randomString, through, trace } from "../utils";
+import { handleApiResponse, request, through, trace } from "../utils";
 import { useToggle } from "../hooks/useToggle.hook";
 import { FriendValidations } from "../validations/Friend.validations";
 import { FriendForm } from "../forms/Friend.form";
 import { emptyFriend } from "../models/friend.model";
-import { FlexRow } from "../layouts";
-import { handleApiResponse, mockAPI } from "../apiFaker";
-import { Error } from "../common/Error.common";
+import { DebugForm } from "../devTools/DebugForm.devtool";
+import { ValidationErrors } from "../common/ValidationErrors.common";
 
 export const CreateFriend = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const {
-    forceValidationState,
-    isValid,
-    validateAll,
-    validateAllIfTrue,
-    validationErrors,
-  } = FriendValidations();
+  const v = FriendValidations();
 
   // --[ local state ]---------------------------------------------------------
   const [friend, setFriend] = useState(emptyFriend());
@@ -29,28 +22,29 @@ export const CreateFriend = ({ disabled }) => {
 
   // --[ component logic ]-----------------------------------------------------
 
-  /* prettier-ignore */
   // handleChange :: Friend -> void
   const handleChange = through([
-    validateAllIfTrue,
+    v.validateAllIfTrue,
     setFriend
   ]);
 
+  // handleSubmitResponse :: API JSON -> void
+  const handleSubmitResponse = handleApiResponse(v, activateValidationErrors);
+
   // dispatchPayload :: Friend -> void
   const dispatchPayload = async (payload) => {
-    mockAPI("error", payload)
-      .then(handleApiResponse(forceValidationState))
+    request('friend', "POST", payload)
+      .then((res) => res.json())
+      .then(handleSubmitResponse)
       .catch(trace("whoopsies"));
   };
 
-  /* prettier-ignore */
   // onFailure :: Friend -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
-  /* prettier-ignore */
   // onSuccess :: Friend -> void
   const onSuccess = through([
     dispatchPayload,
@@ -59,7 +53,7 @@ export const CreateFriend = ({ disabled }) => {
 
   // handleSubmit :: Friend -> fn(Friend)
   const handleSubmit = firstMatch([
-    [validateAll, onSuccess],
+    [v.validateAll, onSuccess],
     [(_) => true, onFailure],
   ]);
 
@@ -67,27 +61,18 @@ export const CreateFriend = ({ disabled }) => {
     <section>
       <fieldset>
         <legend>CreateFriend.component.jsx</legend>
-        <FlexRow>
-          <div style={{ width: "50%" }}>
-            <FriendForm
-              data={friend}
-              disabled={disabled}
-              onChange={handleChange}
-              submitFailed={hasValidationErrors}
-            />
-          </div>
-          <div style={{ width: "50%", marginLeft: "2rem" }}>
-            <h2>Friend State</h2>
-            <pre>{JSON.stringify(friend, null, 2)}</pre>
-          </div>
-        </FlexRow>
+        <DebugForm data={friend} name="Friend Form">
+          <FriendForm
+            data={friend}
+            disabled={disabled}
+            onChange={handleChange}
+            submitFailed={hasValidationErrors}
+          />
+        </DebugForm>
         <button disabled={disabled} onClick={() => handleSubmit(friend)}>
           Submit
         </button>
-        {!isValid &&
-          validationErrors.map((error) => (
-            <Error key={randomString()} error={error} />
-          ))}
+        <ValidationErrors {...v} />
       </fieldset>
     </section>
   );
