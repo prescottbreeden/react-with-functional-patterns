@@ -6,7 +6,6 @@ import {
   all,
   map,
   reduce,
-  converge,
   head,
   applyTo,
   equals,
@@ -40,7 +39,6 @@ export const useValidation = (validationSchema) => {
   };
 
   // -- isValid and validationState ---------------------------------------
-  const [isValid, setIsValid] = useState(true);
   const [validationState, setValidationState] = useState(
     createValidationsState(validationSchema)
   );
@@ -98,30 +96,6 @@ export const useValidation = (validationSchema) => {
   });
 
   /**
-   * Takes a unique data set and runs them against the defined schema. Only use
-   * if you need to run validations on data where the validation props are
-   * unable to follow the names of the properties of an object. Will return a
-   * boolean and update validation state.
-   * @param customValidations CustomValidation[]
-   * @return boolean
-   */
-  const validateCustom = (customValidations) => {
-    const zip = converge(runAllValidators, [prop("key"), prop("state")]);
-    const state = reduce(
-      (acc, current) => {
-        return {
-          ...acc,
-          ...zip(current),
-        };
-      },
-      {},
-      customValidations
-    );
-    setValidationState(state);
-    return allValid(state);
-  };
-
-  /**
    * Updates the validation state if the validation succeeds.
    * @param key string the name of the property being validated
    * @return boolean
@@ -135,34 +109,6 @@ export const useValidation = (validationSchema) => {
       return isPropertyValid(property, validations);
     }
     return true;
-  });
-
-  /**
-   * Create a new onBlur function that calls validate on a property matching the
-   * name of the event whenever a blur event happens.
-   * @param state the data controlling the form
-   * @return function :: (event: any) => any
-   */
-  const validateOnBlur = curry((state, event) => {
-    const {
-      target: { value, name },
-    } = event;
-    validate(name, { ...state, [name]: value });
-  });
-
-  /**
-   * Create a new onChange function that calls validateIfTrue on a property
-   * matching the name of the event whenever a change event happens.
-   * @param onChange function to handle onChange events
-   * @param state the data controlling the form
-   * @return function :: (event: any) => any
-   */
-  const validateOnChange = curry((onChange, state) => (event) => {
-    const {
-      target: { value, name },
-    } = event;
-    validateIfTrue(name, { ...state, [name]: value });
-    return onChange(event);
   });
 
   /**
@@ -184,7 +130,7 @@ export const useValidation = (validationSchema) => {
       props
     );
     setValidationState({ ...validationState, ...newState });
-    return allValid(newState);
+    return isValid(newState);
   };
 
   /**
@@ -206,7 +152,7 @@ export const useValidation = (validationSchema) => {
       props
     );
     setValidationState({ ...validationState, ...newState });
-    return allValid(newState);
+    return isValid(newState);
   };
 
   /**
@@ -250,8 +196,8 @@ export const useValidation = (validationSchema) => {
     return true;
   };
 
-  // -- helper to determine if a new validation state is valid ------------
-  const allValid = (state) => {
+  // -- determine if a validation state is valid ------------
+  const isValid = (state = validationState) => {
     return reduce(
       (acc, curr) => {
         return acc ? isPropertyValid(curr, state) : acc;
@@ -271,13 +217,11 @@ export const useValidation = (validationSchema) => {
   };
 
   // -- memoized functions to update state on change detection -------------
-  const updateIsValid = useCallback(allValid, [validationState]);
   const updateErrors = useCallback(generateValidationErrors, [validationState]);
 
   useEffect(() => {
-    setIsValid(updateIsValid(validationState));
     setValidationErros(updateErrors(validationState));
-  }, [validationState, updateIsValid]); // eslint-disable-line
+  }, [validationState]); // eslint-disable-line
 
   return {
     forceValidationState,
@@ -287,12 +231,9 @@ export const useValidation = (validationSchema) => {
     isValid,
     resetValidationState,
     validate,
+    validateIfTrue,
     validateAll,
     validateAllIfTrue,
-    validateCustom,
-    validateIfTrue,
-    validateOnBlur,
-    validateOnChange,
     validationErrors,
     validationState,
   };

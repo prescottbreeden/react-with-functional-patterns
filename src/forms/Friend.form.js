@@ -1,32 +1,34 @@
-import { __, compose, mergeRight, converge, keys, head, prop } from "ramda";
+import { __, compose, mergeRight, converge, keys, head, prop, assoc } from "ramda";
 import React, { useEffect } from "react";
 import { Field } from "../common/Field.common";
-import { maybe, through } from "../utils";
-import { NameValidations } from "../validations/Name.validations";
+import { NameForm } from "../forms/Name.form";
+import { through } from "../utils";
+import { FriendValidations } from "../validations/Friend.validations";
+import { maybe } from 'fp-tools';
 
-export const NameForm = ({
+export const FriendForm = ({
   onChange,
+  submitFailed,
   data,
   disabled,
-  submitFailed,
   overrideValidationState,
 }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const v = NameValidations();
+  const v = FriendValidations();
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
   const get = prop(__, data);
 
-  // validateEvent :: validationFunction -> event -> void
+  // validateEvent :: validationFunction -> FieldEvent -> void
   const validateEvent = (func) =>
     converge(func, [compose(head, keys), mergeRight(data)]);
 
-  // updateState :: event -> void
+  // updateState :: FieldEvent -> void
   const updateState = compose(onChange, mergeRight(data));
 
   /* prettier-ignore */
-  // handleChange :: event -> void
+  // handleChange :: FieldEvent -> void
   const handleChange = through([
     validateEvent(v.validateIfTrue),
     updateState
@@ -43,30 +45,21 @@ export const NameForm = ({
   return (
     <>
       <fieldset>
-        <legend>Name.form.jsx</legend>
+        <legend>Friend.form.jsx</legend>
         <div className="form__group">
-          <Field
-            error={v.getError("firstName")}
+          <NameForm
             disabled={disabled}
-            name="firstName"
-            onBlur={validateEvent(v.validate)}
-            onChange={handleChange}
-            value={get("firstName")}
+            data={get("name")}
+            onChange={compose(handleChange, assoc("name", __, {}))}
+            submitFailed={submitFailed}
           />
           <Field
             disabled={disabled}
-            error={v.getError("lastName")}
-            name="lastName"
+            error={v.getError("lengthOfFriendship")}
+            name="lengthOfFriendship"
             onBlur={validateEvent(v.validate)}
             onChange={handleChange}
-            value={get("lastName")}
-          />
-          <Field
-            disabled={disabled}
-            name="middleName"
-            onBlur={validateEvent(v.validate)}
-            onChange={handleChange}
-            value={get("middleName")}
+            value={get("lengthOfFriendship")}
           />
         </div>
       </fieldset>

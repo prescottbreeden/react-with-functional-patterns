@@ -1,3 +1,4 @@
+import React from 'react';
 import { SecureWrap } from "./common/SecureWrap.component";
 import { CreateFriend } from "./components/CreateFriend.component";
 import { CreateName } from "./components/CreateName.component";

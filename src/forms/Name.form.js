@@ -1,11 +1,11 @@
-import { __, compose, mergeRight, converge, prop, always } from "ramda";
+import { __, compose, mergeRight, converge, keys, head, prop } from "ramda";
 import React, { useEffect } from "react";
-import { Error } from "../common/Error.common";
 import { Field } from "../common/Field.common";
-import { maybe, through } from "../utils";
-import { FoodFormValidations } from "../validations/FoodForm.validations";
+import { through } from "../utils";
+import { NameValidations } from "../validations/Name.validations";
+import { maybe } from 'fp-tools';
 
-export const FoodForm = ({
+export const NameForm = ({
   onChange,
   data,
   disabled,
@@ -13,7 +13,7 @@ export const FoodForm = ({
   overrideValidationState,
 }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const v = FoodFormValidations();
+  const v = NameValidations();
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
@@ -21,17 +21,19 @@ export const FoodForm = ({
 
   // validateEvent :: validationFunction -> event -> void
   const validateEvent = (func) =>
-    converge(func, [always("isChecked"), mergeRight(data)]);
+    converge(func, [compose(head, keys), mergeRight(data)]);
 
-  // updateState :: InputEvent -> void
+  // updateState :: event -> void
   const updateState = compose(onChange, mergeRight(data));
 
-  // handleChange :: InputEvent -> void
+  /* prettier-ignore */
+  // handleChange :: event -> void
   const handleChange = through([
     validateEvent(v.validateIfTrue),
     updateState
   ]);
 
+  // --[ lifecycle ]-----------------------------------------------------------
   useEffect(() => {
     if (submitFailed) {
       v.validateAll(data);
@@ -40,37 +42,35 @@ export const FoodForm = ({
   }, [submitFailed, overrideValidationState]); // eslint-disable-line
 
   return (
-    <section>
-      <div className="form__group">
-        <fieldset>
-          <legend>Food.form.jsx</legend>
+    <>
+      <fieldset>
+        <legend>Name.form.jsx</legend>
+        <div className="form__group">
           <Field
-            checked={get("bambooLeaves")}
+            error={v.getError("firstName")}
             disabled={disabled}
-            name="bambooLeaves"
+            name="firstName"
             onBlur={validateEvent(v.validate)}
             onChange={handleChange}
-            type="checkbox"
+            value={get("firstName")}
           />
           <Field
-            checked={get("bambooShoots")}
             disabled={disabled}
-            name="bambooShoots"
+            error={v.getError("lastName")}
+            name="lastName"
             onBlur={validateEvent(v.validate)}
             onChange={handleChange}
-            type="checkbox"
+            value={get("lastName")}
           />
           <Field
-            checked={get("bambooStems")}
             disabled={disabled}
-            name="bambooStems"
+            name="middleName"
             onBlur={validateEvent(v.validate)}
             onChange={handleChange}
-            type="checkbox"
+            value={get("middleName")}
           />
-          <Error error={v.getError("isChecked")} />
-        </fieldset>
-      </div>
-    </section>
+        </div>
+      </fieldset>
+    </>
   );
 };

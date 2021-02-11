@@ -1,19 +1,19 @@
-import { cond as firstMatch } from "ramda";
+import { always, cond as firstMatch } from "ramda";
 import React, { useState } from "react";
 import { handleApiResponse, request, through, trace } from "../utils";
 import { useToggle } from "../hooks/useToggle.hook";
-import { FriendValidations } from "../validations/Friend.validations";
-import { FriendForm } from "../forms/Friend.form";
-import { emptyFriend } from "../models/friend.model";
+import { NameValidations } from "../validations/Name.validations";
+import { NameForm } from "../forms/Name.form";
+import { emptyName } from "../models/name.model";
 import { DebugForm } from "../devTools/DebugForm.devtool";
 import { ValidationErrors } from "../common/ValidationErrors.common";
 
-export const CreateFriend = ({ disabled }) => {
+export const CreateName = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const v = FriendValidations();
+  const v = NameValidations();
 
   // --[ local state ]---------------------------------------------------------
-  const [friend, setFriend] = useState(emptyFriend());
+  const [name, setName] = useState(emptyName());
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -22,54 +22,55 @@ export const CreateFriend = ({ disabled }) => {
 
   // --[ component logic ]-----------------------------------------------------
 
-  // handleChange :: Friend -> void
+  // handleChange :: Name -> void
   const handleChange = through([
     v.validateAllIfTrue,
-    setFriend
+    setName
   ]);
 
   // handleSubmitResponse :: API JSON -> void
   const handleSubmitResponse = handleApiResponse(v, activateValidationErrors);
 
-  // dispatchPayload :: Friend -> void
+  // dispatchPayload :: Name -> void
   const dispatchPayload = async (payload) => {
-    request('friend', "POST", payload)
+    request('name', "POST", payload)
       .then((res) => res.json())
       .then(handleSubmitResponse)
       .catch(trace("whoopsies"));
   };
 
-  // onFailure :: Friend -> void
+  // onFailure :: Name -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
-  // onSuccess :: Friend -> void
+  // onSuccess :: Name -> void
   const onSuccess = through([
     dispatchPayload,
     deactivateValidationErrors
   ]);
 
-  // handleSubmit :: Friend -> fn(Friend)
+  // handleSubmit :: Name -> fn(Name)
   const handleSubmit = firstMatch([
     [v.validateAll, onSuccess],
-    [(_) => true, onFailure],
+    [always(true), onFailure],
   ]);
 
   return (
     <section>
       <fieldset>
-        <legend>CreateFriend.component.jsx</legend>
-        <DebugForm data={friend} name="Friend Form">
-          <FriendForm
-            data={friend}
+        <legend>CreateName.component.jsx</legend>
+        <DebugForm data={name} name="Name Form">
+          <NameForm
+            data={name}
             disabled={disabled}
             onChange={handleChange}
             submitFailed={hasValidationErrors}
+            overrideValidationState={v.validationState}
           />
         </DebugForm>
-        <button disabled={disabled} onClick={() => handleSubmit(friend)}>
+        <button disabled={disabled} onClick={() => handleSubmit(name)}>
           Submit
         </button>
         <ValidationErrors {...v} />

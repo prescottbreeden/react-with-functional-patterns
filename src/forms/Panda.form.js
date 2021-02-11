@@ -1,12 +1,13 @@
-import { __, compose, prop, mergeRight, converge, always } from "ramda";
+import { __, assoc, compose, prop, mergeRight, converge, always } from "ramda";
 import React, { useEffect } from "react";
-import { maybe, replaceArrayItem, set, through } from "../utils";
+import { replaceArrayItem, through } from "../utils";
 import { FoodForm } from "../forms/Food.form";
 import { NameForm } from "../forms/Name.form";
 import { FriendForm } from "../forms/Friend.form";
 import { DynamicForm } from "../common/DynamicForm.common";
 import { PandaValidations } from "../validations/Panda.validations";
 import { emptyFriend } from "../models/friend.model";
+import { maybe } from 'fp-tools';
 
 export const PandaForm = ({
   onChange,
@@ -24,9 +25,12 @@ export const PandaForm = ({
 
   // updateModel[model] :: Partial<Panda> -> { Partial<Panda> }
   const updateModel = {
-    name: set("name"),
-    food: set("food"),
-    friends: compose(set("friends"), replaceArrayItem(get("friends"), "id")),
+    name: assoc("name", __, data),
+    food: assoc("food", __, data),
+    friends: compose(
+      assoc("friends", __, data),
+      replaceArrayItem(get("friends"), "id")
+  ),
   };
 
   // validateChange :: string -> Partial<Panda> -> void
@@ -37,7 +41,7 @@ export const PandaForm = ({
   const handleChange = (name) =>
     through([
       validateChange(name),
-      compose(onChange, mergeRight(data), updateModel[name]),
+      compose(onChange, updateModel[name]),
     ]);
 
   // addFriend :: () -> void

@@ -1,19 +1,19 @@
-import { cond as firstMatch } from "ramda";
+import { always, cond as firstMatch } from "ramda";
 import React, { useState } from "react";
+import { emptyPanda } from "../models/panda.model";
 import { handleApiResponse, request, through, trace } from "../utils";
+import { PandaValidations } from "../validations/Panda.validations";
 import { useToggle } from "../hooks/useToggle.hook";
-import { NameValidations } from "../validations/Name.validations";
-import { NameForm } from "../forms/Name.form";
-import { emptyName } from "../models/name.model";
+import { PandaForm } from "../forms/Panda.form";
 import { DebugForm } from "../devTools/DebugForm.devtool";
 import { ValidationErrors } from "../common/ValidationErrors.common";
 
-export const CreateName = ({ disabled }) => {
+export const CreatePanda = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const v = NameValidations();
+  const v = PandaValidations();
 
   // --[ local state ]---------------------------------------------------------
-  const [name, setName] = useState(emptyName());
+  const [panda, setPanda] = useState(emptyPanda());
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -21,56 +21,54 @@ export const CreateName = ({ disabled }) => {
   ] = useToggle(false);
 
   // --[ component logic ]-----------------------------------------------------
-
-  // handleChange :: Name -> void
+  // handleChange :: Panda -> void
   const handleChange = through([
     v.validateAllIfTrue,
-    setName
+    setPanda
   ]);
 
   // handleSubmitResponse :: API JSON -> void
   const handleSubmitResponse = handleApiResponse(v, activateValidationErrors);
 
-  // dispatchPayload :: Name -> void
+  // dispatchPayload :: Panda -> void
   const dispatchPayload = async (payload) => {
-    request('name', "POST", payload)
+    request('panda', "POST", payload)
       .then((res) => res.json())
       .then(handleSubmitResponse)
       .catch(trace("whoopsies"));
   };
 
-  // onFailure :: Name -> void
+  // onFailure :: Panda -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
-  // onSuccess :: Name -> void
+  // onSuccess :: Panda -> void
   const onSuccess = through([
     dispatchPayload,
     deactivateValidationErrors
   ]);
 
-  // handleSubmit :: Name -> fn(Name)
+  // handleSubmit :: Panda -> fn(Panda)
   const handleSubmit = firstMatch([
     [v.validateAll, onSuccess],
-    [(_) => true, onFailure],
+    [always(true), onFailure],
   ]);
 
   return (
     <section>
       <fieldset>
-        <legend>CreateName.component.jsx</legend>
-        <DebugForm data={name} name="Name Form">
-          <NameForm
-            data={name}
+        <legend>CreatePanda.component.jsx</legend>
+        <DebugForm data={panda} name="Panda Form">
+          <PandaForm
+            data={panda}
             disabled={disabled}
             onChange={handleChange}
             submitFailed={hasValidationErrors}
-            overrideValidationState={v.validationState}
           />
         </DebugForm>
-        <button disabled={disabled} onClick={() => handleSubmit(name)}>
+        <button disabled={disabled} onClick={() => handleSubmit(panda)}>
           Submit
         </button>
         <ValidationErrors {...v} />

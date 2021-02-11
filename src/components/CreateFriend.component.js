@@ -1,19 +1,19 @@
-import { cond as firstMatch } from "ramda";
+import { always, cond as firstMatch } from "ramda";
 import React, { useState } from "react";
-import { emptyPanda } from "../models/panda.model";
 import { handleApiResponse, request, through, trace } from "../utils";
-import { PandaValidations } from "../validations/Panda.validations";
 import { useToggle } from "../hooks/useToggle.hook";
-import { PandaForm } from "../forms/Panda.form";
+import { FriendValidations } from "../validations/Friend.validations";
+import { FriendForm } from "../forms/Friend.form";
+import { emptyFriend } from "../models/friend.model";
 import { DebugForm } from "../devTools/DebugForm.devtool";
 import { ValidationErrors } from "../common/ValidationErrors.common";
 
-export const CreatePanda = ({ disabled }) => {
+export const CreateFriend = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------
-  const v = PandaValidations();
+  const v = FriendValidations();
 
   // --[ local state ]---------------------------------------------------------
-  const [panda, setPanda] = useState(emptyPanda());
+  const [friend, setFriend] = useState(emptyFriend());
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -21,54 +21,55 @@ export const CreatePanda = ({ disabled }) => {
   ] = useToggle(false);
 
   // --[ component logic ]-----------------------------------------------------
-  // handleChange :: Panda -> void
+
+  // handleChange :: Friend -> void
   const handleChange = through([
     v.validateAllIfTrue,
-    setPanda
+    setFriend
   ]);
 
   // handleSubmitResponse :: API JSON -> void
   const handleSubmitResponse = handleApiResponse(v, activateValidationErrors);
 
-  // dispatchPayload :: Panda -> void
+  // dispatchPayload :: Friend -> void
   const dispatchPayload = async (payload) => {
-    request('panda', "POST", payload)
+    request('friend', "POST", payload)
       .then((res) => res.json())
       .then(handleSubmitResponse)
       .catch(trace("whoopsies"));
   };
 
-  // onFailure :: Panda -> void
+  // onFailure :: Friend -> void
   const onFailure = through([
     trace("rendering front-end errors"),
     activateValidationErrors,
   ]);
 
-  // onSuccess :: Panda -> void
+  // onSuccess :: Friend -> void
   const onSuccess = through([
     dispatchPayload,
     deactivateValidationErrors
   ]);
 
-  // handleSubmit :: Panda -> fn(Panda)
+  // handleSubmit :: Friend -> fn(Friend)
   const handleSubmit = firstMatch([
     [v.validateAll, onSuccess],
-    [(_) => true, onFailure],
+    [always(true), onFailure],
   ]);
 
   return (
     <section>
       <fieldset>
-        <legend>CreatePanda.component.jsx</legend>
-        <DebugForm data={panda} name="Panda Form">
-          <PandaForm
-            data={panda}
+        <legend>CreateFriend.component.jsx</legend>
+        <DebugForm data={friend} name="Friend Form">
+          <FriendForm
+            data={friend}
             disabled={disabled}
             onChange={handleChange}
             submitFailed={hasValidationErrors}
           />
         </DebugForm>
-        <button disabled={disabled} onClick={() => handleSubmit(panda)}>
+        <button disabled={disabled} onClick={() => handleSubmit(friend)}>
           Submit
         </button>
         <ValidationErrors {...v} />

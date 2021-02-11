@@ -1,34 +1,20 @@
 import { useValidation } from "../hooks/useValidation.hook";
-import {
-  compose,
-  lt as gt,
-  length,
-  prop,
-  equals,
-  trim,
-  defaultTo,
-} from "ramda";
+import { compose, prop, equals } from "ramda";
+import { cleanString, stringNotEmpty } from "../utils";
 
 export const NameValidations = () => {
   return useValidation({
     firstName: [
       {
         error: "First Name is required.",
-        validation: compose(
-          gt(0),
-          length,
-          trim,
-          defaultTo(""),
-          prop("firstName")
-        ),
+        validation: compose(stringNotEmpty, prop("firstName")),
       },
       {
         error: "First Name cannot be bob.",
         validation: compose(
           equals(false),
           equals("bob"),
-          trim,
-          defaultTo(""),
+          cleanString,
           prop("firstName")
         ),
       },
@@ -36,13 +22,7 @@ export const NameValidations = () => {
     lastName: [
       {
         error: "Last Name is required.",
-        validation: compose(
-          gt(0),
-          length,
-          trim,
-          defaultTo(""),
-          prop("lastName")
-        ),
+        validation: compose(stringNotEmpty, prop("lastName")),
       },
     ],
   });

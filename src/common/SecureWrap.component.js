@@ -5,12 +5,12 @@ const isDisabled = firstMatch([
   [compose(equals('admin'), prop('role')), always(false)],
   [compose(includes('full'), prop('access')), always(false)],
   [compose(includes('write'), prop('access')), always(false)],
-  [(_) => true, always(true)],
+  [always(true), always(true)],
 ]);
 
 const isHidden = firstMatch([
   [compose(equals([]), prop('access')), always(true)],
-  [(_) => true, always(false)],
+  [always(true), always(false)],
 ]);
 
 export const SecureWrap = (props) => {
