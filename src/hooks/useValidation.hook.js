@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import * as R from 'ramda';
-import { executeSideEffect } from "../utils";
-import { maybe } from "fp-tools";
+import { executeSideEffect, maybe } from "../utils";
 
 /**
  * A hook that can be used to generate an object containing functions and
@@ -12,19 +11,14 @@ import { maybe } from "fp-tools";
 export const useValidation = (validationSchema) => {
   // --[ state constructor ]---------------------------------------------------
   const createValidationsState = schema => {
-    const buildState = R.reduce((acc, key) => ({
+    const buildState = (acc, key) => ({
       ...acc,
-      [key]: {
-        isValid: true,
-        errors: [],
-      }, 
-    }), {});
+      [key]: { isValid: true, errors: [] },
+    });
     return maybe(schema)
       .map(R.keys)
-      .map(buildState)
-      .map(R.defaultTo({}))
-      .join();
-    ;
+      .map(R.reduce(buildState), {})
+      .chain(R.defaultTo({}));
   }
 
   // --[ local states ]--------------------------------------------------------
@@ -33,7 +27,7 @@ export const useValidation = (validationSchema) => {
   );
   const [validationErrors, setValidationErros] = useState([]);
 
-  // --[ hook logic ] ---------------------------------------------------------
+  // --[ validation logic ] ---------------------------------------------------
   // updateValidationState :: ValidationState -> ValidationState
   const updateValidationState = executeSideEffect(setValidationState);
 
@@ -56,13 +50,13 @@ export const useValidation = (validationSchema) => {
         R.always(''),
         R.prop('error')
       );
-    return maybe(validationSchema[property])
+    return maybe(validationSchema)
+      .map(R.prop(property))
       .map(R.values)
       .map(R.map(getErrorOrNone))
       .map(R.filter(R.pipe(R.length, R.lt(0))))
       .map((errors) => ({ errors, isValid: !errors.length }))
-      .map(R.assoc(property, R.__, validationState))
-      .join();
+      .chain(R.assoc(property, R.__, validationState));
   });
 
   // validate :: string -> value -> boolean
@@ -72,8 +66,7 @@ export const useValidation = (validationSchema) => {
       .map(R.mergeRight(validationState))
       .map(updateValidationState)
       .map(isPropertyValid(property))
-      .map(R.defaultTo(true))
-      .join();
+      .chain(R.defaultTo(true));
 
   // validateIfTrue :: string -> value -> boolean
   const validateIfTrue = (property, value) => 
@@ -85,8 +78,7 @@ export const useValidation = (validationSchema) => {
         updateValidationState,
         R.always(null)
       ))
-      .map(R.defaultTo(true))
-      .join();
+      .chain(R.defaultTo(true));
 
   // validationAllIfTrue :: (x, [string]) -> boolean
   const validateAll = (value, props = Object.keys(validationSchema)) => {
@@ -99,8 +91,7 @@ export const useValidation = (validationSchema) => {
       .map(R.mergeRight(validationState))
       .map(updateValidationState)
       .map(isValid)
-      .map(R.defaultTo(true))
-      .join();
+      .chain(R.defaultTo(true));
   };
 
   // validationAllIfTrue :: (x, [string]) -> boolean
@@ -115,8 +106,7 @@ export const useValidation = (validationSchema) => {
       .map(R.reduce(reduceValids), {})
       .map(R.mergeRight(validationState))
       .map(isValid)
-      .map(R.defaultTo(true))
-      .join();
+      .chain(R.defaultTo(true));
   };
 
   // getAllErrors :: (string, ValidationState) -> [string]
