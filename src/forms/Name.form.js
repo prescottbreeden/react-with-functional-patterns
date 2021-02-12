@@ -1,9 +1,9 @@
 import { __, compose, mergeRight, converge, keys, head, prop } from "ramda";
 import React, { useEffect } from "react";
 import { Field } from "../common/Field.common";
-import { through } from "../utils";
+import { through } from "../utils/general";
+import { maybe } from "../utils/maybe";
 import { NameValidations } from "../validations/Name.validations";
-import { maybe } from 'fp-tools';
 
 export const NameForm = ({
   onChange,

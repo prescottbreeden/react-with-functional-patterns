@@ -1,12 +1,13 @@
 import { always, cond as firstMatch } from "ramda";
 import React, { useState } from "react";
-import { handleApiResponse, request, through, trace } from "../utils";
 import { useToggle } from "../hooks/useToggle.hook";
 import { NameValidations } from "../validations/Name.validations";
 import { NameForm } from "../forms/Name.form";
 import { emptyName } from "../models/name.model";
 import { DebugForm } from "../devTools/DebugForm.devtool";
 import { ValidationErrors } from "../common/ValidationErrors.common";
+import { through, trace } from "../utils/general";
+import { handleApiResponse, request } from "../utils/request";
 
 export const CreateName = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------

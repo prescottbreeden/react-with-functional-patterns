@@ -1,12 +1,13 @@
 import { always, cond as firstMatch } from "ramda";
 import React, { useState } from "react";
 import { emptyPanda } from "../models/panda.model";
-import { handleApiResponse, request, through, trace } from "../utils";
 import { PandaValidations } from "../validations/Panda.validations";
 import { useToggle } from "../hooks/useToggle.hook";
 import { PandaForm } from "../forms/Panda.form";
 import { DebugForm } from "../devTools/DebugForm.devtool";
 import { ValidationErrors } from "../common/ValidationErrors.common";
+import { through, trace } from "../utils/general";
+import { handleApiResponse, request } from "../utils/request";
 
 export const CreatePanda = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------

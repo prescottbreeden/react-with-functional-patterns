@@ -1,12 +1,13 @@
 import { always, cond as firstMatch } from "ramda";
 import React, { useState } from "react";
-import { handleApiResponse, request, through, trace } from "../utils";
 import { useToggle } from "../hooks/useToggle.hook";
 import { FriendValidations } from "../validations/Friend.validations";
 import { FriendForm } from "../forms/Friend.form";
 import { emptyFriend } from "../models/friend.model";
 import { DebugForm } from "../devTools/DebugForm.devtool";
 import { ValidationErrors } from "../common/ValidationErrors.common";
+import { through, trace } from "../utils/general";
+import { handleApiResponse, request } from "../utils/request";
 
 export const CreateFriend = ({ disabled }) => {
   // --[ dependencies ]--------------------------------------------------------

@@ -2,9 +2,9 @@ import { __, compose, mergeRight, converge, prop, always } from "ramda";
 import React, { useEffect } from "react";
 import { Error } from "../common/Error.common";
 import { Field } from "../common/Field.common";
-import { through } from "../utils";
+import { through } from "../utils/general";
+import { maybe } from "../utils/maybe";
 import { FoodFormValidations } from "../validations/FoodForm.validations";
-import { maybe } from 'fp-tools';
 
 export const FoodForm = ({
   onChange,

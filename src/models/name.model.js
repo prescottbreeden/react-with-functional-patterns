@@ -1,4 +1,4 @@
-import { randomString } from "../utils";
+import { randomString } from "../utils/general";
 
 export const emptyName = () => ({
   id: randomString(),

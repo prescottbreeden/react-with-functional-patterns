@@ -1,6 +1,7 @@
 import { compose, concat } from "ramda";
 import React from "react";
-import { eventNameValue, randomString, removeCamelCase } from "../utils";
+import { eventNameValue } from "../utils/events";
+import { randomString, removeCamelCase } from "../utils/general";
 import { Error } from "./Error.common";
 
 export const FormInput = ({

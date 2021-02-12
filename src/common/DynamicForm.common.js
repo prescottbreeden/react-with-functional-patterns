@@ -1,7 +1,7 @@
 import { map, prop } from "ramda";
 import React from "react";
 import { FlexColumn, FlexRow } from "../layouts";
-import { maybe } from 'fp-tools';
+import { maybe } from '../utils/maybe';
 
 export const DynamicForm = ({
   addForm,

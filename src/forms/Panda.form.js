@@ -1,13 +1,13 @@
 import { __, assoc, compose, prop, mergeRight, converge, always } from "ramda";
 import React, { useEffect } from "react";
-import { replaceArrayItem, through } from "../utils";
 import { FoodForm } from "../forms/Food.form";
 import { NameForm } from "../forms/Name.form";
 import { FriendForm } from "../forms/Friend.form";
 import { DynamicForm } from "../common/DynamicForm.common";
+import { replaceArrayItem, through } from "../utils/general";
+import { maybe } from "../utils/maybe";
 import { PandaValidations } from "../validations/Panda.validations";
 import { emptyFriend } from "../models/friend.model";
-import { maybe } from 'fp-tools';
 
 export const PandaForm = ({
   onChange,

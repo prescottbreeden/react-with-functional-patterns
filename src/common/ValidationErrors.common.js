@@ -1,6 +1,6 @@
 import React from 'react';
 import { Error } from "../common/Error.common";
-import {randomString} from '../utils';
+import { randomString } from "../utils/general";
 
 export const ValidationErrors = ({
   isValid,

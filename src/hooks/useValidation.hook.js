@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import * as R from 'ramda';
-import { executeSideEffect, maybe } from "../utils";
+import { maybe } from "../utils/maybe";
+import { executeSideEffect } from "../utils/general";
 
 /**
  * A hook that can be used to generate an object containing functions and

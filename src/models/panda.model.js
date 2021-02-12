@@ -1,4 +1,4 @@
-import { randomString } from "../utils";
+import { randomString } from "../utils/general";
 import { emptyFood } from "./food.model";
 import { emptyFriend } from "./friend.model";
 import { emptyName } from "./name.model";

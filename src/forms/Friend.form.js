@@ -2,9 +2,9 @@ import { __, compose, mergeRight, converge, keys, head, prop, assoc } from "ramd
 import React, { useEffect } from "react";
 import { Field } from "../common/Field.common";
 import { NameForm } from "../forms/Name.form";
-import { through } from "../utils";
+import { through } from "../utils/general";
+import { maybe } from "../utils/maybe";
 import { FriendValidations } from "../validations/Friend.validations";
-import { maybe } from 'fp-tools';
 
 export const FriendForm = ({
   onChange,

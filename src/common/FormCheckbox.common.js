@@ -1,6 +1,7 @@
 import { always, compose, concat, ifElse } from "ramda";
 import React from "react";
-import { eventNameChecked, randomString, removeCamelCase } from "../utils";
+import { eventNameChecked } from "../utils/events";
+import { randomString, removeCamelCase } from "../utils/general";
 import { Error } from "./Error.common";
 
 export const FormCheckbox = ({

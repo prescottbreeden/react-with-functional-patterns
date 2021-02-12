@@ -1,4 +1,4 @@
-import { randomString } from "../utils";
+import { randomString } from "../utils/general";
 import { emptyName } from "./name.model";
 
 export const emptyFriend = () => ({

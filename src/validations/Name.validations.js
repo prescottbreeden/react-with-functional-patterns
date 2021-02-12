@@ -1,6 +1,6 @@
 import { useValidation } from "../hooks/useValidation.hook";
 import { compose, prop, equals } from "ramda";
-import { cleanString, stringNotEmpty } from "../utils";
+import { cleanString, stringNotEmpty } from "../utils/validation";
 
 export const NameValidations = () => {
   return useValidation({
