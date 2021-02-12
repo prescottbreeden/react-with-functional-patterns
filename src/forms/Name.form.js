@@ -37,7 +37,7 @@ export const NameForm = ({
   useEffect(() => {
     if (submitFailed) {
       v.validateAll(data);
-      maybe(overrideValidationState).map(v.forceValidationState);
+      maybe(overrideValidationState).map(v.setValidationState);
     }
   }, [submitFailed, overrideValidationState]); // eslint-disable-line
 

@@ -25,6 +25,11 @@ import {
 // trace :: string -> x -> x
 export const trace = curry((msg, x) => console.log(msg, x) || x);
 
+// executeSideEffect :: f -> x -> x
+export const executeSideEffect = curry((f, x) => f(x) || x);
+
+export const doNothing = always(null);
+
 // through :: [fn] -> x -> [fn(x)]
 // A Wolfram Alpha inspired function that takes a list of functions
 // and applies and maps an argument to each function -- excellent for
@@ -86,7 +91,7 @@ export const handleApiResponse = (validationObject, activateValidationErrors) =>
     compose(trace("hasError"), hasValidationError),
     compose(
       activateValidationErrors,
-      validationObject.forceValidationState,
+      validationObject.setValidationState,
       mergeDeepRight(validationObject.validationState),
       trace("API fail")
     ),
