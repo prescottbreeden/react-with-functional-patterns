@@ -16,10 +16,10 @@ export const useValidation = (validationSchema) => {
       ...acc,
       [key]: { isValid: true, errors: [] },
     });
-    return maybe(schema)
+    const state = maybe(schema)
       .map(R.keys)
-      .map(R.reduce(buildState), {})
-      .chain(R.defaultTo({}));
+      .map(R.reduce(buildState), {});
+    return state.isJust ? state.join() : {};
   }
 
   // --[ local states ]--------------------------------------------------------
@@ -51,13 +51,14 @@ export const useValidation = (validationSchema) => {
         R.always(''),
         R.prop('error')
       );
-    return maybe(validationSchema)
+    const state = maybe(validationSchema)
       .map(R.prop(property))
       .map(R.values)
       .map(R.map(getErrorOrNone))
       .map(R.filter(R.pipe(R.length, R.lt(0))))
       .map((errors) => ({ errors, isValid: !errors.length }))
-      .chain(R.assoc(property, R.__, validationState));
+      .map(R.assoc(property, R.__, validationState));
+    return state.isJust ? state.join() : validationState;
   });
 
   // validate :: string -> value -> boolean
