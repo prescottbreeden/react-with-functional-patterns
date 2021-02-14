@@ -1,4 +1,4 @@
-import { always, cond as firstMatch } from "ramda";
+import * as R from "ramda";
 import React, { useState } from "react";
 import { emptyPanda } from "../models/panda.model";
 import { PandaValidations } from "../validations/Panda.validations";
@@ -52,9 +52,9 @@ export const CreatePanda = ({ disabled }) => {
   ]);
 
   // handleSubmit :: Panda -> fn(Panda)
-  const handleSubmit = firstMatch([
+  const handleSubmit = R.cond([
     [v.validateAll, onSuccess],
-    [always(true), onFailure],
+    [R.always(true), onFailure],
   ]);
 
   return (

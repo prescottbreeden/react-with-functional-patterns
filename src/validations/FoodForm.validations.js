@@ -1,4 +1,4 @@
-import { useValidation } from "../hooks/useValidation.hook";
+import { useValidation } from "@de-formed/react-validations";
 import { prop, anyPass } from "ramda";
 
 export const FoodFormValidations = () => {

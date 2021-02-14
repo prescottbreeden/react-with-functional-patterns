@@ -1,4 +1,4 @@
-import { __, compose, mergeRight, converge, keys, head, prop } from "ramda";
+import * as R from "ramda";
 import React, { useEffect } from "react";
 import { Field } from "../common/Field.common";
 import { through } from "../utils/general";
@@ -17,14 +17,14 @@ export const NameForm = ({
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
-  const get = prop(__, data);
+  const get = R.prop(R.__, data);
 
   // validateEvent :: validationFunction -> event -> void
   const validateEvent = (func) =>
-    converge(func, [compose(head, keys), mergeRight(data)]);
+    R.converge(func, [R.compose(R.head, R.keys), R.mergeRight(data)]);
 
   // updateState :: event -> void
-  const updateState = compose(onChange, mergeRight(data));
+  const updateState = R.compose(onChange, R.mergeRight(data));
 
   /* prettier-ignore */
   // handleChange :: event -> void

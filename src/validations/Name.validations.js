@@ -1,4 +1,4 @@
-import { useValidation } from "../hooks/useValidation.hook";
+import { useValidation } from "@de-formed/react-validations";
 import { compose, prop, equals } from "ramda";
 import { cleanString, stringNotEmpty } from "../utils/validation";
 

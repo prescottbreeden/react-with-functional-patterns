@@ -1,4 +1,4 @@
-import { __, compose, mergeRight, converge, keys, head, prop, assoc } from "ramda";
+import * as R from "ramda";
 import React, { useEffect } from "react";
 import { Field } from "../common/Field.common";
 import { NameForm } from "../forms/Name.form";
@@ -18,14 +18,14 @@ export const FriendForm = ({
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
-  const get = prop(__, data);
+  const get = R.prop(R.__, data);
 
   // validateEvent :: validationFunction -> FieldEvent -> void
   const validateEvent = (func) =>
-    converge(func, [compose(head, keys), mergeRight(data)]);
+    R.converge(func, [R.compose(R.head, R.keys), R.mergeRight(data)]);
 
   // updateState :: FieldEvent -> void
-  const updateState = compose(onChange, mergeRight(data));
+  const updateState = R.compose(onChange, R.mergeRight(data));
 
   /* prettier-ignore */
   // handleChange :: FieldEvent -> void
@@ -38,7 +38,7 @@ export const FriendForm = ({
   useEffect(() => {
     if (submitFailed) {
       v.validateAll(data);
-      maybe(overrideValidationState).map(v.forceValidationState);
+      maybe(overrideValidationState).map(v.setValidationState);
     }
   }, [submitFailed, overrideValidationState]); // eslint-disable-line
 
@@ -50,7 +50,7 @@ export const FriendForm = ({
           <NameForm
             disabled={disabled}
             data={get("name")}
-            onChange={compose(handleChange, assoc("name", __, {}))}
+            onChange={R.compose(handleChange, R.assoc("name", R.__, {}))}
             submitFailed={submitFailed}
           />
           <Field

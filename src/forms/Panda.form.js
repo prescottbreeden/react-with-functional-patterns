@@ -1,4 +1,4 @@
-import { __, assoc, compose, prop, mergeRight, converge, always } from "ramda";
+import * as R from "ramda";
 import React, { useEffect } from "react";
 import { FoodForm } from "../forms/Food.form";
 import { NameForm } from "../forms/Name.form";
@@ -21,28 +21,25 @@ export const PandaForm = ({
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
-  const get = prop(__, data);
+  const get = R.prop(R.__, data);
 
   // updateModel[model] :: Partial<Panda> -> { Partial<Panda> }
   const updateModel = {
-    name: assoc("name", __, data),
-    food: assoc("food", __, data),
-    friends: compose(
-      assoc("friends", __, data),
+    name: R.assoc("name", R.__, data),
+    food: R.assoc("food", R.__, data),
+    friends: R.compose(
+      R.assoc("friends", R.__, data),
       replaceArrayItem(get("friends"), "id")
-  ),
+    ),
   };
 
   // validateChange :: string -> Partial<Panda> -> void
   const validateChange = (name) =>
-    converge(v.validateIfTrue, [always(name), mergeRight(data)]);
+    R.converge(v.validateIfTrue, [R.always(name), R.mergeRight(data)]);
 
   // handleChange :: string -> Partial<Panda> -> void
   const handleChange = (name) =>
-    through([
-      validateChange(name),
-      compose(onChange, updateModel[name]),
-    ]);
+    through([validateChange(name), R.compose(onChange, updateModel[name])]);
 
   // addFriend :: () -> void
   const addFriend = (_) =>
@@ -61,7 +58,7 @@ export const PandaForm = ({
   useEffect(() => {
     if (submitFailed) {
       v.validateAll(data);
-      maybe(overrideValidationState).map(v.forceValidationState);
+      maybe(overrideValidationState).map(v.setValidationState);
     }
   }, [submitFailed, overrideValidationState]); // eslint-disable-line
 

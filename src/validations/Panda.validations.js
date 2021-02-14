@@ -1,4 +1,4 @@
-import { useValidation } from "../hooks/useValidation.hook";
+import { useValidation } from "@de-formed/react-validations";
 import { all, compose, equals, map, prop } from "ramda";
 import { NameValidations } from "./Name.validations";
 import { FoodFormValidations } from "./FoodForm.validations";

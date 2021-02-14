@@ -1,4 +1,4 @@
-import { __, compose, mergeRight, converge, prop, always } from "ramda";
+import * as R from "ramda";
 import React, { useEffect } from "react";
 import { Error } from "../common/Error.common";
 import { Field } from "../common/Field.common";
@@ -18,25 +18,22 @@ export const FoodForm = ({
 
   // --[ component logic ]-----------------------------------------------------
   // get :: string -> data[string]
-  const get = prop(__, data);
+  const get = R.prop(R.__, data);
 
   // validateEvent :: validationFunction -> event -> void
   const validateEvent = (func) =>
-    converge(func, [always("isChecked"), mergeRight(data)]);
+    R.converge(func, [R.always("isChecked"), R.mergeRight(data)]);
 
   // updateState :: InputEvent -> void
-  const updateState = compose(onChange, mergeRight(data));
+  const updateState = R.compose(onChange, R.mergeRight(data));
 
   // handleChange :: InputEvent -> void
-  const handleChange = through([
-    validateEvent(v.validateIfTrue),
-    updateState
-  ]);
+  const handleChange = through([validateEvent(v.validateIfTrue), updateState]);
 
   useEffect(() => {
     if (submitFailed) {
       v.validateAll(data);
-      maybe(overrideValidationState).map(v.forceValidationState);
+      maybe(overrideValidationState).map(v.setValidationState);
     }
   }, [submitFailed, overrideValidationState]); // eslint-disable-line
 
