@@ -15,6 +15,7 @@ export const CreateName = ({ disabled }) => {
 
   // --[ local state ]---------------------------------------------------------
   const [name, setName] = useState(emptyName());
+  const [ isSubmitting, deactivateForms, activateForms ] = useToggle(false);
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -37,7 +38,8 @@ export const CreateName = ({ disabled }) => {
     request('name', "POST", payload)
       .then((res) => res.json())
       .then(handleSubmitResponse)
-      .catch(trace("whoopsies"));
+      .catch(trace("whoopsies"))
+      .finally(activateForms);
   };
 
   // onFailure :: Name -> void
@@ -48,8 +50,9 @@ export const CreateName = ({ disabled }) => {
 
   // onSuccess :: Name -> void
   const onSuccess = through([
+    deactivateForms,
+    deactivateValidationErrors,
     dispatchPayload,
-    deactivateValidationErrors
   ]);
 
   // handleSubmit :: Name -> fn(Name)
@@ -65,13 +68,16 @@ export const CreateName = ({ disabled }) => {
         <DebugForm data={name} name="Name Form">
           <NameForm
             data={name}
-            disabled={disabled}
+            disabled={disabled || isSubmitting}
             onChange={handleChange}
             submitFailed={hasValidationErrors}
             overrideValidationState={v.validationState}
           />
         </DebugForm>
-        <button disabled={disabled} onClick={() => handleSubmit(name)}>
+        <button
+          disabled={disabled || isSubmitting}
+          onClick={() => handleSubmit(name)}
+        >
           Submit
         </button>
         <ValidationErrors {...v} />

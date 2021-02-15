@@ -15,6 +15,7 @@ export const CreatePanda = ({ disabled }) => {
 
   // --[ local state ]---------------------------------------------------------
   const [panda, setPanda] = useState(emptyPanda());
+  const [ isSubmitting, deactivateForms, activateForms ] = useToggle(false);
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -36,7 +37,8 @@ export const CreatePanda = ({ disabled }) => {
     request('panda', "POST", payload)
       .then((res) => res.json())
       .then(handleSubmitResponse)
-      .catch(trace("whoopsies"));
+      .catch(trace("whoopsies"))
+      .finally(activateForms);
   };
 
   // onFailure :: Panda -> void
@@ -47,8 +49,9 @@ export const CreatePanda = ({ disabled }) => {
 
   // onSuccess :: Panda -> void
   const onSuccess = through([
+    deactivateForms,
+    deactivateValidationErrors,
     dispatchPayload,
-    deactivateValidationErrors
   ]);
 
   // handleSubmit :: Panda -> fn(Panda)
@@ -64,12 +67,15 @@ export const CreatePanda = ({ disabled }) => {
         <DebugForm data={panda} name="Panda Form">
           <PandaForm
             data={panda}
-            disabled={disabled}
+            disabled={disabled || isSubmitting}
             onChange={handleChange}
             submitFailed={hasValidationErrors}
           />
         </DebugForm>
-        <button disabled={disabled} onClick={() => handleSubmit(panda)}>
+        <button
+          disabled={disabled || isSubmitting}
+          onClick={() => handleSubmit(panda)}
+        >
           Submit
         </button>
         <ValidationErrors {...v} />

@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import {trace} from './general';
+import {through, trace} from './general';
 
 export const request = (url, method, payload) => {
   const baseAPI = "http://localhost:5000/api/";
@@ -34,5 +34,8 @@ export const handleApiResponse = (validationObject, activateValidationErrors) =>
       validationObject.setValidationState,
       activateValidationErrors,
     ),
-    trace("no API errors")
+    through([
+      trace("no API errors"),
+      () => alert('Success')
+    ]),
   );

@@ -15,6 +15,7 @@ export const CreateFriend = ({ disabled }) => {
 
   // --[ local state ]---------------------------------------------------------
   const [friend, setFriend] = useState(emptyFriend());
+  const [ isSubmitting, deactivateForms, activateForms ] = useToggle(false);
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -37,7 +38,8 @@ export const CreateFriend = ({ disabled }) => {
     request('friend', "POST", payload)
       .then((res) => res.json())
       .then(handleSubmitResponse)
-      .catch(trace("whoopsies"));
+      .catch(trace("whoopsies"))
+      .finally(activateForms);
   };
 
   // onFailure :: Friend -> void
@@ -48,8 +50,9 @@ export const CreateFriend = ({ disabled }) => {
 
   // onSuccess :: Friend -> void
   const onSuccess = through([
+    deactivateForms,
+    deactivateValidationErrors,
     dispatchPayload,
-    deactivateValidationErrors
   ]);
 
   // handleSubmit :: Friend -> fn(Friend)
@@ -65,12 +68,15 @@ export const CreateFriend = ({ disabled }) => {
         <DebugForm data={friend} name="Friend Form">
           <FriendForm
             data={friend}
-            disabled={disabled}
+            disabled={disabled || isSubmitting}
             onChange={handleChange}
             submitFailed={hasValidationErrors}
           />
         </DebugForm>
-        <button disabled={disabled} onClick={() => handleSubmit(friend)}>
+        <button
+          disabled={disabled || isSubmitting}
+          onClick={() => handleSubmit(friend)}
+        >
           Submit
         </button>
         <ValidationErrors {...v} />
