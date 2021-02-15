@@ -15,7 +15,7 @@ export const CreateFriend = ({ disabled }) => {
 
   // --[ local state ]---------------------------------------------------------
   const [friend, setFriend] = useState(emptyFriend());
-  const [ isSubmitting, deactivateForms, activateForms ] = useToggle(false);
+  const [isSubmitting, deactivateForms, activateForms] = useToggle(false);
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -25,17 +25,14 @@ export const CreateFriend = ({ disabled }) => {
   // --[ component logic ]-----------------------------------------------------
 
   // handleChange :: Friend -> void
-  const handleChange = through([
-    v.validateAllIfTrue,
-    setFriend
-  ]);
+  const handleChange = through([v.validateAllIfTrue, setFriend]);
 
   // handleSubmitResponse :: API JSON -> void
   const handleSubmitResponse = handleApiResponse(v, activateValidationErrors);
 
   // dispatchPayload :: Friend -> void
   const dispatchPayload = async (payload) => {
-    request('friend', "POST", payload)
+    request("friend", "POST", payload)
       .then((res) => res.json())
       .then(handleSubmitResponse)
       .catch(trace("whoopsies"))

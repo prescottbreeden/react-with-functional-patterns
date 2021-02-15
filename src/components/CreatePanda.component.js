@@ -15,7 +15,7 @@ export const CreatePanda = ({ disabled }) => {
 
   // --[ local state ]---------------------------------------------------------
   const [panda, setPanda] = useState(emptyPanda());
-  const [ isSubmitting, deactivateForms, activateForms ] = useToggle(false);
+  const [isSubmitting, deactivateForms, activateForms] = useToggle(false);
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -24,17 +24,14 @@ export const CreatePanda = ({ disabled }) => {
 
   // --[ component logic ]-----------------------------------------------------
   // handleChange :: Panda -> void
-  const handleChange = through([
-    v.validateAllIfTrue,
-    setPanda
-  ]);
+  const handleChange = through([v.validateAllIfTrue, setPanda]);
 
   // handleSubmitResponse :: API JSON -> void
   const handleSubmitResponse = handleApiResponse(v, activateValidationErrors);
 
   // dispatchPayload :: Panda -> void
   const dispatchPayload = async (payload) => {
-    request('panda', "POST", payload)
+    request("panda", "POST", payload)
       .then((res) => res.json())
       .then(handleSubmitResponse)
       .catch(trace("whoopsies"))

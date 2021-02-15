@@ -15,7 +15,7 @@ export const CreateName = ({ disabled }) => {
 
   // --[ local state ]---------------------------------------------------------
   const [name, setName] = useState(emptyName());
-  const [ isSubmitting, deactivateForms, activateForms ] = useToggle(false);
+  const [isSubmitting, deactivateForms, activateForms] = useToggle(false);
   const [
     hasValidationErrors,
     activateValidationErrors,
@@ -25,17 +25,14 @@ export const CreateName = ({ disabled }) => {
   // --[ component logic ]-----------------------------------------------------
 
   // handleChange :: Name -> void
-  const handleChange = through([
-    v.validateAllIfTrue,
-    setName
-  ]);
+  const handleChange = through([v.validateAllIfTrue, setName]);
 
   // handleSubmitResponse :: API JSON -> void
   const handleSubmitResponse = handleApiResponse(v, activateValidationErrors);
 
   // dispatchPayload :: Name -> void
   const dispatchPayload = async (payload) => {
-    request('name', "POST", payload)
+    request("name", "POST", payload)
       .then((res) => res.json())
       .then(handleSubmitResponse)
       .catch(trace("whoopsies"))
